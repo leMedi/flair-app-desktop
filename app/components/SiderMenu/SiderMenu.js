@@ -1,8 +1,9 @@
 import React, { PureComponent } from 'react';
+import { connect } from 'react-redux';
 import { Layout } from 'antd';
 import pathToRegexp from 'path-to-regexp';
 import classNames from 'classnames';
-import Link from 'umi/link';
+import { Link } from 'react-router-dom';
 import styles from './index.less';
 import BaseMenu, { getMenuMatches } from './BaseMenu';
 import { urlToList } from '../_utils/pathTools';
@@ -49,7 +50,7 @@ export const getMenuMatchKeys = (flatMenuKeys, paths) =>
     []
   );
 
-export default class SiderMenu extends PureComponent {
+class SiderMenu extends PureComponent {
   constructor(props) {
     super(props);
     this.flatMenuKeys = getFlatMenuKeys(props.menuData);
@@ -125,3 +126,14 @@ export default class SiderMenu extends PureComponent {
     );
   }
 }
+
+
+function mapStateToProps() {
+  return {
+  };
+}
+
+export default connect(
+  mapStateToProps,
+  {}
+)(SiderMenu);
