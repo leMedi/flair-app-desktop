@@ -65,7 +65,6 @@ const routes = [
 
 export class Router extends React.Component {
   render() {
-    console.log(path.join(__dirname, './containers/HelloPage'))
     return (
       <Switch>
         {
