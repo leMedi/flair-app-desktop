@@ -65,8 +65,15 @@ class DashboardLayout extends Component {
     return null;
   };
 
+  getContentStyle = () => {
+    const { fixedHeader } = this.props;
+    return {
+      margin: '24px 24px 0',
+      paddingTop: fixedHeader ? 64 : 0,
+    };
+  };
+
   handleMenuCollapse = collapsed => {
-    // const { collapsed } = this.state
     this.setState({
       collapsed,
     });
@@ -112,7 +119,7 @@ class DashboardLayout extends Component {
             isMobile={isMobile}
             collapsed={collapsed}
             />
-          <Content>
+          <Content style={this.getContentStyle()}>
             <DashboardRouter url={pathname} />
           </Content>
         </Layout>
