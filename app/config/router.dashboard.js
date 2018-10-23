@@ -4,6 +4,9 @@ import { Switch, Route } from 'react-router-dom';
 
 import HelloPage from '../containers/HelloPage';
 import ProfilePage from '../containers/ProfilePage';
+import ProfList from '../containers/professeur/ProfList';
+import AjouterProf from '../containers/professeur/AjouterProf';
+
 
 
 const routes = [
@@ -27,13 +30,37 @@ const routes = [
         name: "Profile",
         icon: "dashboard",
         component: ProfilePage
-      },
-      // {
-      //   component: '404',
-      // },
+      }
     ],
   },
+  {
+    path: '/Professeur',
+    component: '../layouts/BasicLayout',
+    icon: "user",
+    name: "Professeur",
+    // Routes: ['src/pages/Authorized'],
+    // authority: ['admin', 'user'],
+    routes: [
+      // professeur
+      { 
+        path: '/profList',
+        name: "ProfList",
+        icon: "profile",
+        component: ProfList
+      },
+      { 
+        path: '/ajouterProf',
+        name: "ajouterProf",
+        icon: "user-add",
+        component: AjouterProf
+      },
+    ],
+  }
 ];
+
+
+
+
 
 
 export class Router extends React.Component {
