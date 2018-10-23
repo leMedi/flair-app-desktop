@@ -6,10 +6,9 @@ import { connect } from 'react-redux';
 import SiderMenu from '../components/SiderMenu';
 import logo from '../assets/logo.svg';
 import routes, { Router as DashboardRouter } from '../config/router.dashboard';
+import Header from '../components/Dashboard/Header';
 
-
-const { Header, Content } = Layout;
-
+const { Content } = Layout;
 
 // Conversion router to menu.
 function formatter(data, parentAuthority, parentName) {
@@ -55,27 +54,44 @@ class DashboardLayout extends Component {
   };
 
   
+  getLayoutStyle = () => {
+    const { isMobile } = this.state;
+    const { fixSiderbar, collapsed, layout } = this.props;
+    if (fixSiderbar && layout !== 'topmenu' && !isMobile) {
+      return {
+        paddingLeft: collapsed ? '80px' : '256px',
+      };
+    }
+    return null;
+  };
 
-  toggle = () => {
-    const { collapsed } = this.state
+  getContentStyle = () => {
+    const { fixedHeader } = this.props;
+    return {
+      margin: '24px 24px 0',
+      paddingTop: fixedHeader ? 64 : 0,
+    };
+  };
+
+  handleMenuCollapse = collapsed => {
     this.setState({
-      collapsed: !collapsed,
+      collapsed,
     });
-  }
+  };
+  
 
   render() {
     const {
       navTheme,
       layout: PropsLayout,
       children,
+      location,
       location: { pathname },
     } = this.props;
 
-    const { isMobile, menuData } = this.state;
+    const { isMobile, menuData, collapsed } = this.state;
     const isTop = PropsLayout === 'topmenu';
 
-    const { collapsed } = this.state
-    
     return(
       <Layout>
         {isTop && !isMobile ? null : (
@@ -83,21 +99,27 @@ class DashboardLayout extends Component {
             logo={logo}
             trigger={null}
             onCollapse={this.handleMenuCollapse}
+            collapsed={collapsed}
             menuData={menuData}
             theme={navTheme}
             isMobile={isMobile}
-            {...this.props}
+            location={location}
           />
         )}
-        <Layout>
-          <Header style={{ background: '#fff', padding: 0 }}>
-            <Icon
-              className="trigger"
-              type={collapsed ? 'menu-unfold' : 'menu-fold'}
-              onClick={this.toggle}
+        <Layout
+          style={{
+            ...this.getLayoutStyle(),
+            minHeight: '100vh',
+          }}
+        >
+          <Header
+            menuData={menuData}
+            handleMenuCollapse={this.handleMenuCollapse}
+            logo={logo}
+            isMobile={isMobile}
+            collapsed={collapsed}
             />
-          </Header>
-          <Content>
+          <Content style={this.getContentStyle()}>
             <DashboardRouter url={pathname} />
           </Content>
         </Layout>
