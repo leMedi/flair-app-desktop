@@ -4,6 +4,8 @@ import ContactSearch from '../../components/contact/ContactSearch';
 import ContactProfile from '../../components/contact/ContactProfile';
 import ContactList from '../../components/contact/ContactList';
 import RegisterForm from './AjouterProfForm';
+const { Professeur } = require('../../../sequelize');
+
 
 import { Layout, Card, Row, Col , Button } from 'antd';
 
@@ -57,11 +59,20 @@ class Index extends React.Component {
         this.state = {
           selectedId: -1,
           search: '',
-          profs: profs,
+          profs: [],
+          //test:''
         }
         this.onSearchInputChange = this.onSearchInputChange.bind(this);
 
     }
+
+    componentDidMount = async () => {
+        // const req = await fetch(`http://localhost:3000/api/profs`);
+        // const res = await req.json();
+        this.setState({ profs: Professeur.findAll() });
+        console.log(this.state.profs);
+    }
+
 
     onSearchInputChange (event)  {
         this.setState({ search: event.target.value });

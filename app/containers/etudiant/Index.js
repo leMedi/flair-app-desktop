@@ -42,6 +42,8 @@ const profs = [
     }
 ]
 
+
+
 function filterContacts(contacts, search) {
     search = search.toUpperCase();
     return search
@@ -63,6 +65,7 @@ class Index extends React.Component {
 
     }
 
+    
     onSearchInputChange (event)  {
         this.setState({ search: event.target.value });
     }
