@@ -10,7 +10,7 @@ class ContactSearch extends React.Component {
     render(){
         const Search = Input.Search;
         return (
-
+            
             <Search
             placeholder="input search text"
             // onSearch={value => console.log(value)}
@@ -18,6 +18,8 @@ class ContactSearch extends React.Component {
             onChange={this.props.onSearchInputChange}
             value={this.props.value}
             />
+               
+            
 
         );
     }

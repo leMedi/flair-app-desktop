@@ -1,17 +1,16 @@
 import React, { Component } from 'react';
 import { List, message, Avatar, Spin } from 'antd';
-import './ContactList.css';
 
 class ContactList extends React.Component {
   render() {
     return (
-        <List
+        <List style={{ margin: '20px' }}
         dataSource={this.props.contacts}
-        // renderItem={ item=>( <li onClick={()=>{console.log(item); this.props.handelSelect(item.id)}}>{item.id}</li>)}
         renderItem={item => (
             <List.Item
                 key={item.id}
                 onClick={()=>{console.log(item); this.props.handelSelect(item.id)}}
+                 style={item.id == this.props.selectedId ? { borderLeft:'3px solid #1890ff', paddingLeft: '20px' } : {}}
             >
                 <List.Item.Meta
                     avatar={<Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />}

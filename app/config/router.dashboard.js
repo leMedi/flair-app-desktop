@@ -5,16 +5,12 @@ import { Switch, Route } from 'react-router-dom';
 import HelloPage from '../containers/HelloPage';
 import ProfilePage from '../containers/ProfilePage';
 
-import ProfList from '../containers/professeur/ProfList';
-import AjouterProf from '../containers/professeur/AjouterProf';
 
-import AjouterClasse from '../containers/classe/AjouterClasse';
 import ClasseList from '../containers/classe/ClasseList';
 
-import AjouterModule from '../containers/module/AjouterModule';
-import ModuleList from '../containers/module/ModuleList';
-
-import Index from '../containers/professeur/Index';
+import IndexProf from '../containers/professeur/Index';
+import IndexModule from '../containers/module/Index';
+import IndexEtudiant from '../containers/etudiant/Index';
 
 
 
@@ -54,23 +50,28 @@ const routes = [
     routes: [
       // professeur
       { 
-        path: '/',
+        path: '/Professeur',
         name: "Professeur",
         icon: "profile",
-        component: Index
-      },
+        component: IndexProf
+      }
+    ],
+  },
+  {
+    path: '/Etudiant',
+    component: '../layouts/BasicLayout',
+    icon: "user",
+    name: "Etudiant",
+    // Routes: ['src/pages/Authorized'],
+    // authority: ['admin', 'user'],
+    routes: [
+      // Etudiant
       { 
-        path: '/profList',
-        name: "ProfList",
+        path: '/Etudiant',
+        name: "Etudiant",
         icon: "profile",
-        component: ProfList
-      },
-      { 
-        path: '/ajouterProf',
-        name: "ajouterProf",
-        icon: "user-add",
-        component: AjouterProf
-      },
+        component: IndexEtudiant
+      }
     ],
   },
   {
@@ -88,12 +89,6 @@ const routes = [
         icon: "profile",
         component: ClasseList
       },
-      { 
-        path: '/ajouterClasse',
-        name: "ajouterClasse",
-        icon: "user-add",
-        component: AjouterClasse
-      },
     ],
   },
   {
@@ -107,16 +102,11 @@ const routes = [
       // Module
       { 
         path: '/moduleList',
-        name: "ModuleList",
+        name: "Module",
         icon: "profile",
-        component: ModuleList
-      },
-      { 
-        path: '/ajouterModule',
-        name: "ajouterModule",
-        icon: "user-add",
-        component: AjouterModule
-      },
+        component: IndexModule
+      }
+
     ],
   },
 ];

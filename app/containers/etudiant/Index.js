@@ -3,7 +3,7 @@ import React from 'react';
 import ContactSearch from '../../components/contact/ContactSearch';
 import ContactProfile from '../../components/contact/ContactProfile';
 import ContactList from '../../components/contact/ContactList';
-import RegisterForm from './AjouterProfForm';
+import RegisterForm from './AjoutEtudForm';
 
 import { Layout, Card, Row, Col , Button } from 'antd';
 

@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { Button ,Card, Table, Divider, Tag } from 'antd';
 
+import RegisterForm from './AjoutClassForm';
+
 
 
 
@@ -65,9 +67,7 @@ const columns = [{
           <Card bordered={false}>
 
 
-            <Button  type="primary" style={{ marginBottom: 16 }}>
-            Add a Professeur
-            </Button>
+            <RegisterForm />
             
             <Table columns={columns} dataSource={data} />
             
