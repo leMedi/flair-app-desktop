@@ -1,46 +1,17 @@
 import React from 'react';
+import { connect } from "react-redux";
+
+import { Layout, Card, Row, Col } from 'antd';
 
 import ContactSearch from '../../components/contact/ContactSearch';
 import ContactProfile from '../../components/contact/ContactProfile';
 import ContactList from '../../components/contact/ContactList';
 import RegisterForm from './AjouterProfForm';
 
-import { Layout, Card, Row, Col , Button } from 'antd';
+// redux
+import { find } from '../../actions/prof'
 
 const {  Content, Sider } = Layout;
-
-const profs = [
-    {
-        id: 1,
-        firstName: 'fgfg',
-        lastName: '2122',
-        email: "norman.weaver@example.com",
-    },
-    {
-        id: 11,
-        firstName: 'test1',
-        lastName: 'last1',
-        email: "norman.weaver@example.com",
-    },
-    {
-        id: 12,
-        firstName: 'test2',
-        lastName: 'last1',
-        email: "norman.weaver@example.com",
-    },
-    {
-        id: 13,
-        firstName: 'test3',
-        lastName: 'last1',
-        email: "norman.weaver@example.com",
-    },
-    {
-        id: 19,
-        firstName: 'test4',
-        lastName: 'last1',
-        email: "norman.weaver@example.com",
-    }
-]
 
 function filterContacts(contacts, search) {
     search = search.toUpperCase();
@@ -57,27 +28,27 @@ class Index extends React.Component {
         this.state = {
           selectedId: -1,
           search: '',
-          profs: profs,
         }
-        this.onSearchInputChange = this.onSearchInputChange.bind(this);
 
+        this.onSearchInputChange = this.onSearchInputChange.bind(this);
+    }
+
+    async componentDidMount() {
+			this.props.find()
     }
 
     onSearchInputChange (event)  {
         this.setState({ search: event.target.value });
     }
 
- 
-
-      
     render() {
 
-        const selected = this.state.profs.filter(prof=>(prof.id === this.state.selectedId))
+        const selected = this.props.profs.filter(prof=>(prof._id === this.state.selectedId))
 
         const selectedProf = selected.length ? selected[0] : 'no prof selectioner';
         //console.log('selectedProf', selectedProf)
 
-        const profs = filterContacts(this.state.profs, this.state.search);
+        const profs = filterContacts(this.props.profs, this.state.search);
 
         return (
 
@@ -116,6 +87,15 @@ class Index extends React.Component {
 
 } 
 
-export default Index;
+
+const mapStateToProps = state => ({
+  profs: state.prof.list
+});
+
+export default connect(
+  mapStateToProps,
+  { find }
+)(Index);
+
 
 

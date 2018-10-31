@@ -8,9 +8,9 @@ class ContactList extends React.Component {
         dataSource={this.props.contacts}
         renderItem={item => (
             <List.Item
-                key={item.id}
-                onClick={()=>{console.log(item); this.props.handelSelect(item.id)}}
-                 style={item.id == this.props.selectedId ? { borderLeft:'3px solid #1890ff', paddingLeft: '20px' } : {}}
+                key={item._id}
+                onClick={()=>{console.log(item); this.props.handelSelect(item._id)}}
+                 style={item._id == this.props.selectedId ? { borderLeft:'3px solid #1890ff', paddingLeft: '20px' } : {}}
             >
                 <List.Item.Meta
                     avatar={<Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />}
