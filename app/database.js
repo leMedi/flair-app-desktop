@@ -7,6 +7,19 @@ db.createIndex({
   index: {fields: ['type']}
 });
 
+// vider la base de donner
+
+// db.allDocs().then(function (result) {
+//   // Promise isn't supported by all browsers; you may want to use bluebird
+//   return Promise.all(result.rows.map(function (row) {
+//     return db.remove(row.id, row.value.rev);
+//   }));
+// }).then(function () {
+//   // done!
+// }).catch(function (err) {
+//   // error!
+// });
+
 export default db;
 
 

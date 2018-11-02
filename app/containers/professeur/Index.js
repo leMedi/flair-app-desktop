@@ -9,7 +9,8 @@ import ContactList from '../../components/contact/ContactList';
 import RegisterForm from './AjouterProfForm';
 
 // redux
-import { find } from '../../actions/prof'
+import { find } from '../../actions/prof';
+import { save } from '../../models/Prof';
 
 const {  Content, Sider } = Layout;
 
@@ -20,10 +21,25 @@ function filterContacts(contacts, search) {
       : contacts;
 }
 
+// var prof = {
+//     firstName: 'achraf',
+//     lastName: 'jacobi',
+//     email: 'achraf@jacobi.com'
+// };
+
+// save(prof, function callback(err, result) {
+//     if (!err) {
+//       console.log('Successfully added a prof!');
+//     }
+// });
+
 class Index extends React.Component {
+    
 
     constructor(props) {
         super(props);
+
+        
     
         this.state = {
           selectedId: -1,
@@ -31,7 +47,11 @@ class Index extends React.Component {
         }
 
         this.onSearchInputChange = this.onSearchInputChange.bind(this);
+
+        
+
     }
+
 
     async componentDidMount() {
 			this.props.find()

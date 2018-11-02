@@ -2,10 +2,46 @@ import React, { Component } from 'react';
 
 import { Drawer, Form, Button, Col, Row, Input, Select, DatePicker } from 'antd';
 
+import { save } from '../../models/Prof';
+
 const { Option } = Select;
 
 class AjouterProfForm extends React.Component {
-  state = { visible: false };
+  state = { 
+    visible: false,
+    prof: {
+      firstName: '',
+      lastName: '',
+      email: ''
+    }
+  };
+  //----------------------------------------------------------------------------------------------------------
+
+  //---- chuf had handleSubmit bach njib les elements mn input jerabtha b event (name) dima kayb9a state f etat 9dima
+
+  handleSubmit = (event) => {
+    event.preventDefault();
+
+    this.setState({ 
+      visible: false,
+      prof: {
+        firstName: document.getElementById('firstName').value,
+        lastName: document.getElementById('lastName').value,
+        email: document.getElementById('email').value
+      }
+      
+    });
+  
+    
+    console.log(this.state);
+
+    save(this.state.prof , function callback(err, result) {
+      if (!err) {
+        console.log('Successfully added a prof!');
+      }
+    });
+
+  }
 
   showDrawer = () => {
     this.setState({
@@ -44,15 +80,19 @@ class AjouterProfForm extends React.Component {
               <Col span={12}>
                 <Form.Item label="First Name">
                   {getFieldDecorator('firstName', {
-                    rules: [{ required: true, message: 'please enter first name' }],
-                  })(<Input placeholder="please enter first name" />)}
+                      rules: [{ required: true, message: 'Please enter fisrtNmae' }],
+                    })(
+                      <Input placeholder="please enter last name" />
+                    )}
                 </Form.Item>
               </Col>
               <Col span={12}>
               <Form.Item label="Last Name">
                   {getFieldDecorator('lastName', {
-                    rules: [{ required: true, message: 'please enter last name' }],
-                  })(<Input placeholder="please enter last name" />)}
+                      rules: [{ required: true, message: 'Please enter lastName' }],
+                    })(
+                      <Input placeholder="please enter last name" />
+                    )}
                 </Form.Item>
               </Col>
             </Row>
@@ -72,20 +112,22 @@ class AjouterProfForm extends React.Component {
               </Col> */}
               <Col span={12}>
                 <Form.Item label="Email">
-                  {getFieldDecorator('name', {
-                    rules: [{ required: true, message: 'please enter first name' }],
-                  })(<Input placeholder="please enter first name" />)}
+                  {getFieldDecorator('email', {
+                      rules: [{ required: true, message: 'Please choose the addresse' }],
+                    })(
+                      <Input placeholder="please enter first name" />
+                    )}
                 </Form.Item>
               </Col>
-              <Col span={12}>
-              <Form.Item label="Phone number">
+               <Col span={12}>
+              {/* <Form.Item label="Phone number">
                   {getFieldDecorator('phone', {
                     rules: [{ required: true, message: 'please enter phone number' }],
                   })(<Input placeholder="please enter phone number" />)}
-                </Form.Item>
+                </Form.Item> */}
               </Col>
             </Row>
-            <Row gutter={16}>
+            {/*<Row gutter={16}>
               <Col span={12}>
                 <Form.Item label="Addresse">
                   {getFieldDecorator('addresse', {
@@ -121,7 +163,7 @@ class AjouterProfForm extends React.Component {
                   })(<Input.TextArea rows={4} placeholder="please enter url description" />)}
                 </Form.Item>
               </Col>
-            </Row>
+            </Row> */}
           </Form>
           <div
             style={{
@@ -144,13 +186,39 @@ class AjouterProfForm extends React.Component {
             >
               Cancel
             </Button>
-            <Button onClick={this.onClose} type="primary">Submit</Button>
+            <Button onClick={ this.handleSubmit } type="primary">Submit</Button>
           </div>
         </Drawer>
       </div>
     );
   }
+
+
 }
+//this.onClose
+
+//------------------ hada khdamme -------//
+
+// var prof = {}
+
+// const handleSubmit = (event) => {
+//   event.preventDefault();
+  
+//   prof = {
+//     firstName: document.getElementById('firstName').value,
+//     lastName: document.getElementById('lastName').value,
+//     email: document.getElementById('email').value,
+//   }
+
+//   console.log(prof);
+//   save(prof , function callback(err, result) {
+//     if (!err) {
+//       console.log('Successfully added a prof!');
+//     }
+//   });
+// }
+  
+
 
 const RegisterForm = Form.create()(AjouterProfForm);
 
