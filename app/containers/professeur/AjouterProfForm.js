@@ -9,44 +9,38 @@ const { Option } = Select;
 class AjouterProfForm extends React.Component {
   state = { 
     visible: false,
-    prof: {
+    
+    
       firstName: '',
       lastName: '',
       email: ''
-    }
+    
+    
   };
-  //----------------------------------------------------------------------------------------------------------
-
-  //---- had handleSubmit mabghatch tkhdam fach kandir submit l form
 
   handleSubmit = (event) => {
 
     event.preventDefault();
 
-    const firstName = fieldsValue['firstName'];
-    const lastName = fieldsValue['lastName'];
-    const email = fieldsValue['email'];
+    // console.log(this.state);
 
-    this.setState({ 
-      visible: false,
-      prof: {
-        firstName: firstName,
-        lastName: lastName,
-        email: email
-      }
-      
-    });
-    
-    console.log(firstName);
-    
-    console.log(event.target.elements.firstName.value);
+    const prof = {
+      firstName: this.state.firstName,
+      lastName: this.state.lastName,
+      email: this.state.email
+    }
 
-    save(this.state.prof , function callback(err, result) {
+
+    save(prof , function callback(err, result) {
       if (!err) {
         console.log('Successfully added a prof!');
       }
     });
 
+  }
+
+  handleChange = (evt) => {
+    this.setState({[evt.target.id]: evt.target.value });
   }
 
   showDrawer = () => {
@@ -88,7 +82,7 @@ class AjouterProfForm extends React.Component {
                   {getFieldDecorator('firstName', {
                       rules: [{ required: true, message: 'Please enter fisrtNmae' }],
                     })(
-                      <Input placeholder="please enter last name" />
+                      <Input  placeholder="please enter your first name"  onChange={this.handleChange} />
                     )}
                 </Form.Item>
               </Col>
@@ -97,7 +91,7 @@ class AjouterProfForm extends React.Component {
                   {getFieldDecorator('lastName', {
                       rules: [{ required: true, message: 'Please enter lastName' }],
                     })(
-                      <Input placeholder="please enter last name" />
+                      <Input placeholder="please enter last name"  onChange={this.handleChange} />
                     )}
                 </Form.Item>
               </Col>
@@ -121,7 +115,7 @@ class AjouterProfForm extends React.Component {
                   {getFieldDecorator('email', {
                       rules: [{ required: true, message: 'Please choose the addresse' }],
                     })(
-                      <Input placeholder="please enter email" />
+                      <Input placeholder="please enter email" onChange={this.handleChange} />
                     )}
                 </Form.Item>
               </Col>
@@ -170,8 +164,8 @@ class AjouterProfForm extends React.Component {
                 </Form.Item>
               </Col>
             </Row> */}
-          </Form>
-          <div
+
+            <div
             style={{
               position: 'absolute',
               bottom: 0,
@@ -189,17 +183,18 @@ class AjouterProfForm extends React.Component {
                 marginRight: 8,
               }}
               onClick={this.onClose}
-            >
+            > 
               Cancel
             </Button>
-            <Button htmlType="submit" type="primary">Submit</Button>
+           
+            <Button htmlType="submit" type="primary" onClick={this.onClose} >Submit</Button>
           </div>
+          </Form>
+          
         </Drawer>
       </div>
     );
   }
-
-
 }
 
   
