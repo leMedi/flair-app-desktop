@@ -17,23 +17,29 @@ class AjouterProfForm extends React.Component {
   };
   //----------------------------------------------------------------------------------------------------------
 
-  //---- chuf had handleSubmit bach njib les elements mn input jerabtha b event (name) dima kayb9a state f etat 9dima
+  //---- had handleSubmit mabghatch tkhdam fach kandir submit l form
 
   handleSubmit = (event) => {
+
     event.preventDefault();
+
+    const firstName = fieldsValue['firstName'];
+    const lastName = fieldsValue['lastName'];
+    const email = fieldsValue['email'];
 
     this.setState({ 
       visible: false,
       prof: {
-        firstName: document.getElementById('firstName').value,
-        lastName: document.getElementById('lastName').value,
-        email: document.getElementById('email').value
+        firstName: firstName,
+        lastName: lastName,
+        email: email
       }
       
     });
-  
     
-    console.log(this.state);
+    console.log(firstName);
+    
+    console.log(event.target.elements.firstName.value);
 
     save(this.state.prof , function callback(err, result) {
       if (!err) {
@@ -75,7 +81,7 @@ class AjouterProfForm extends React.Component {
             paddingBottom: 53,
           }}
         >
-          <Form layout="vertical" hideRequiredMark>
+          <Form layout="vertical" hideRequiredMark onSubmit={this.handleSubmit}>
             <Row gutter={16}>
               <Col span={12}>
                 <Form.Item label="First Name">
@@ -115,7 +121,7 @@ class AjouterProfForm extends React.Component {
                   {getFieldDecorator('email', {
                       rules: [{ required: true, message: 'Please choose the addresse' }],
                     })(
-                      <Input placeholder="please enter first name" />
+                      <Input placeholder="please enter email" />
                     )}
                 </Form.Item>
               </Col>
@@ -186,7 +192,7 @@ class AjouterProfForm extends React.Component {
             >
               Cancel
             </Button>
-            <Button onClick={ this.handleSubmit } type="primary">Submit</Button>
+            <Button htmlType="submit" type="primary">Submit</Button>
           </div>
         </Drawer>
       </div>
@@ -195,28 +201,7 @@ class AjouterProfForm extends React.Component {
 
 
 }
-//this.onClose
 
-//------------------ hada khdamme -------//
-
-// var prof = {}
-
-// const handleSubmit = (event) => {
-//   event.preventDefault();
-  
-//   prof = {
-//     firstName: document.getElementById('firstName').value,
-//     lastName: document.getElementById('lastName').value,
-//     email: document.getElementById('email').value,
-//   }
-
-//   console.log(prof);
-//   save(prof , function callback(err, result) {
-//     if (!err) {
-//       console.log('Successfully added a prof!');
-//     }
-//   });
-// }
   
 
 
