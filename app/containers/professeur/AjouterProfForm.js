@@ -7,14 +7,13 @@ import { save } from '../../models/Prof';
 const { Option } = Select;
 
 class AjouterProfForm extends React.Component {
+
   state = { 
     visible: false,
-    
-    
+  
       firstName: '',
       lastName: '',
       email: ''
-    
     
   };
 
@@ -22,7 +21,7 @@ class AjouterProfForm extends React.Component {
 
     event.preventDefault();
 
-    // console.log(this.state);
+    // console.log(this.state.prof);
 
     const prof = {
       firstName: this.state.firstName,
@@ -40,7 +39,7 @@ class AjouterProfForm extends React.Component {
   }
 
   handleChange = (evt) => {
-    this.setState({[evt.target.id]: evt.target.value });
+    this.setState({[evt.target.id]: evt.target.value});
   }
 
   showDrawer = () => {
