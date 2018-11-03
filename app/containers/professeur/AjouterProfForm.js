@@ -1,46 +1,36 @@
 import React, { Component } from 'react';
+import { connect } from "react-redux";
 
-import { Drawer, Form, Button, Col, Row, Input, Select, DatePicker } from 'antd';
+import { Drawer, Form, Button, Col, Row, Input } from 'antd';
 
-import { save } from '../../models/Prof';
+import { find, save } from '../../actions/prof';
 
-const { Option } = Select;
+
+function hasErrors(fieldsError) {
+  return Object.keys(fieldsError).some(field => fieldsError[field]);
+}
 
 class AjouterProfForm extends React.Component {
   state = { 
     visible: false,
-    
-    
-      firstName: '',
-      lastName: '',
-      email: ''
-    
-    
   };
 
   handleSubmit = (event) => {
 
     event.preventDefault();
-
-    // console.log(this.state);
-
-    const prof = {
-      firstName: this.state.firstName,
-      lastName: this.state.lastName,
-      email: this.state.email
-    }
-
-
-    save(prof , function callback(err, result) {
-      if (!err) {
-        console.log('Successfully added a prof!');
-      }
+    this.props.form.validateFields((err, prof) => {
+      if (!err)
+        this.props.save(prof ,  (err2, result) => {
+          if (!err2) {
+            console.log(result)
+            // @TODO: clear form
+            this.props.find();
+            this.setState({visible: false})
+            console.log('Successfully added a prof!');
+          }
+        });
     });
 
-  }
-
-  handleChange = (evt) => {
-    this.setState({[evt.target.id]: evt.target.value });
   }
 
   showDrawer = () => {
@@ -56,7 +46,12 @@ class AjouterProfForm extends React.Component {
   };
 
   render() {
-    const { getFieldDecorator } = this.props.form;
+    const { getFieldDecorator, getFieldsError, getFieldError, isFieldTouched } = this.props.form;
+
+    const firstNameError = isFieldTouched('firstName') && getFieldError('firstName');
+    const lastNameError = isFieldTouched('lastName') && getFieldError('lastName');
+    const emailError = isFieldTouched('email') && getFieldError('email');
+
     return (
       <div>
         <Button type="primary" onClick={this.showDrawer} style={{marginLeft: '100px'}}>
@@ -78,93 +73,48 @@ class AjouterProfForm extends React.Component {
           <Form layout="vertical" hideRequiredMark onSubmit={this.handleSubmit}>
             <Row gutter={16}>
               <Col span={12}>
-                <Form.Item label="First Name">
+                <Form.Item
+                  label="First Name"
+                  validateStatus={firstNameError ? 'error' : ''}
+                  help={firstNameError || ''}
+                >
                   {getFieldDecorator('firstName', {
-                      rules: [{ required: true, message: 'Please enter fisrtNmae' }],
-                    })(
-                      <Input  placeholder="please enter your first name"  onChange={this.handleChange} />
-                    )}
+                    rules: [{ required: true, message: 'Please enter fisrtName' }],
+                  })(
+                    <Input placeholder="please enter your first name" onChange={this.handleChange} />
+                  )}
                 </Form.Item>
               </Col>
               <Col span={12}>
-              <Form.Item label="Last Name">
-                  {getFieldDecorator('lastName', {
-                      rules: [{ required: true, message: 'Please enter lastName' }],
-                    })(
-                      <Input placeholder="please enter last name"  onChange={this.handleChange} />
-                    )}
+              <Form.Item
+                label="Last Name"
+                validateStatus={lastNameError ? 'error' : ''}
+                help={lastNameError || ''}
+              >
+                {getFieldDecorator('lastName', {
+                    rules: [{ required: true, message: 'Please enter lastName' }],
+                  })(
+                    <Input placeholder="please enter last name" onChange={this.handleChange} />
+                  )}
                 </Form.Item>
               </Col>
             </Row>
             <Row gutter={16}>
-                  
-              {/* <Col span={12}> 
-                <Form.Item label="Owner">
-                  {getFieldDecorator('owner', {
-                    rules: [{ required: true, message: 'Please select an owner' }],
-                  })(
-                    <Select placeholder="Please select an owner">
-                      <Option value="xiao">Xiaoxiao Fu</Option>
-                      <Option value="mao">Maomao Zhou</Option>
-                    </Select>
-                  )}
-                </Form.Item>
-              </Col> */}
               <Col span={12}>
-                <Form.Item label="Email">
+                <Form.Item
+                  label="Email"
+                  validateStatus={emailError ? 'error' : ''}
+                  help={emailError || ''}  
+                >
                   {getFieldDecorator('email', {
-                      rules: [{ required: true, message: 'Please choose the addresse' }],
-                    })(
-                      <Input placeholder="please enter email" onChange={this.handleChange} />
-                    )}
-                </Form.Item>
-              </Col>
-               <Col span={12}>
-              {/* <Form.Item label="Phone number">
-                  {getFieldDecorator('phone', {
-                    rules: [{ required: true, message: 'please enter phone number' }],
-                  })(<Input placeholder="please enter phone number" />)}
-                </Form.Item> */}
-              </Col>
-            </Row>
-            {/*<Row gutter={16}>
-              <Col span={12}>
-                <Form.Item label="Addresse">
-                  {getFieldDecorator('addresse', {
                     rules: [{ required: true, message: 'Please choose the addresse' }],
                   })(
-                    <Input placeholder="please enter Adresse" />
-                  )}
-                </Form.Item>
-              </Col>
-              <Col span={12}>
-                <Form.Item label="DateTime">
-                  {getFieldDecorator('dateTime', {
-                    rules: [{ required: true, message: 'Please choose the dateTime' }],
-                  })(
-                    <DatePicker.RangePicker
-                      style={{ width: '100%' }}
-                      getPopupContainer={trigger => trigger.parentNode}
-                    />
+                    <Input placeholder="please enter email" onChange={this.handleChange} />
                   )}
                 </Form.Item>
               </Col>
             </Row>
-            <Row gutter={16}>
-              <Col span={24}>
-                <Form.Item label="Description">
-                  {getFieldDecorator('description', {
-                    rules: [
-                      {
-                        required: true,
-                        message: 'please enter url description',
-                      },
-                    ],
-                  })(<Input.TextArea rows={4} placeholder="please enter url description" />)}
-                </Form.Item>
-              </Col>
-            </Row> */}
-
+            
             <div
             style={{
               position: 'absolute',
@@ -187,7 +137,14 @@ class AjouterProfForm extends React.Component {
               Cancel
             </Button>
            
-            <Button htmlType="submit" type="primary" onClick={this.onClose} >Submit</Button>
+            <Button
+              htmlType="submit"
+              type="primary"
+              onClick={this.handleSubmit}
+              disabled={hasErrors(getFieldsError())}
+            >
+              Submit
+            </Button>
           </div>
           </Form>
           
@@ -202,4 +159,10 @@ class AjouterProfForm extends React.Component {
 
 const RegisterForm = Form.create()(AjouterProfForm);
 
-export default RegisterForm;
+
+export default connect(
+  null,
+  { find, save }
+)(RegisterForm);
+
+// export default RegisterForm;

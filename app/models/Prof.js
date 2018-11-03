@@ -1,14 +1,12 @@
 import {store, find as _find, getById} from '../database'
 
 
-export const save = (doc, cb) => {
+export const save = (doc) => (
   store({
     ...doc,
     type: 'prof'
   })
-  .then (res => cb(null, res))
-  .catch(err => cb(err))
-}
+)
 
 export const get = (id, cb) => {
   getById(id)
