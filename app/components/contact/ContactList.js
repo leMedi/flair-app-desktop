@@ -4,12 +4,13 @@ import { List, message, Avatar, Spin } from 'antd';
 class ContactList extends React.Component {
   render() {
     return (
+        
         <List style={{ margin: '20px' }}
         dataSource={this.props.contacts}
         renderItem={item => (
             <List.Item
                 key={item._id}
-                onClick={()=>{console.log(item); this.props.handelSelect(item._id)}}
+                onClick={()=>{console.log(item); this.props.handelSelect(item); }}
                  style={item._id == this.props.selectedId ? { borderLeft:'3px solid #1890ff', paddingLeft: '20px' } : {}}
             >
                 <List.Item.Meta

@@ -1,11 +1,36 @@
 import React, { Component } from 'react';
+import { connect } from "react-redux";
 
 import { Drawer, Form, Button, Col, Row, Input, Select, DatePicker, Upload,Icon } from 'antd';
 
+import { find, save } from '../../actions/classe';
+
 const { Option } = Select;
+
+function hasErrors(fieldsError) {
+  return Object.keys(fieldsError).some(field => fieldsError[field]);
+}
 
 class AjoutClassForm extends React.Component {
   state = { visible: false };
+
+  handleSubmit = (event) => {
+
+    event.preventDefault();
+    this.props.form.validateFields((err, classe) => {
+      if (!err)
+        this.props.save(classe ,  (err2, result) => {
+          if (!err2) {
+            console.log(result)
+            // @TODO: clear form
+            this.props.find();
+            this.setState({visible: false})
+            console.log('Successfully added a classe!');
+          }
+        });
+    });
+
+  }
 
   showDrawer = () => {
     this.setState({
@@ -20,7 +45,12 @@ class AjoutClassForm extends React.Component {
   };
 
   render() {
-    const { getFieldDecorator } = this.props.form;
+    const { getFieldDecorator, getFieldsError, getFieldError, isFieldTouched } = this.props.form;
+    
+    const filiereError = isFieldTouched('filiere') && getFieldError('filiere');
+    const anneeError = isFieldTouched('annee') && getFieldError('annee');
+    const nameError = isFieldTouched('name') && getFieldError('name');
+    
     return (
       <div>
         <Button type="primary" onClick={this.showDrawer} style={{marginBottom: '20px'}}>
@@ -39,17 +69,25 @@ class AjoutClassForm extends React.Component {
             paddingBottom: 53,
           }}
         >
-          <Form layout="vertical" hideRequiredMark>
+          <Form layout="vertical" hideRequiredMark hideRequiredMark onSubmit={this.handleSubmit}>
             <Row gutter={16}>
               <Col span={12}>
-                <Form.Item label="Filière">
+                <Form.Item 
+                  label="Filière"
+                  validateStatus={filiereError ? 'error' : ''}
+                  help={filiereError || ''}
+                >
                   {getFieldDecorator('filiere', {
                     rules: [{ required: true, message: 'please enter filiere' }],
                   })(<Input placeholder="please enter filiere" />)}
                 </Form.Item>
               </Col>
               <Col span={12}>
-              <Form.Item label="Année">
+              <Form.Item 
+                label="Année"
+                validateStatus={anneeError ? 'error' : ''}
+                help={anneeError || ''}
+              >
                   {getFieldDecorator('annee', {
                     rules: [{ required: true, message: 'please enter annee' }],
                   })(<Input placeholder="please enter annee" />)}
@@ -60,66 +98,49 @@ class AjoutClassForm extends React.Component {
                   
               
               <Col span={12}>
-                <Form.Item label="Nom">
-                  {getFieldDecorator('Nom', {
+                <Form.Item 
+                  label="Name"
+                  validateStatus={nameError ? 'error' : ''}
+                  help={nameError || ''}
+                >
+                  {getFieldDecorator('name', {
                     rules: [{ required: true, message: 'please enter Nom' }],
-                  })(<Input placeholder="Nom & Prénom" />)}
-                </Form.Item>
-              </Col>
-              <Col span={12}>
-                <Form.Item label="CNE">
-                  {getFieldDecorator('CNE', {
-                    rules: [{ required: true, message: 'please enter CNE' }],
-                  })(<Input placeholder="please enter CNE" />)}
+                  })(<Input placeholder="name" />)}
                 </Form.Item>
               </Col>
             </Row>
-            <Row gutter={16}>
-              <Col span={24}>
-              <Form.Item
-                label="Dragger"
-              >
-                <div className="dropbox">
-                  {getFieldDecorator('dragger', {
-                    valuePropName: 'fileList',
-                    getValueFromEvent: this.normFile,
-                  })(
-                    <Upload.Dragger name="files" action="/upload.do">
-                      <p className="ant-upload-drag-icon">
-                        <Icon type="inbox" />
-                      </p>
-                      <p className="ant-upload-text">Click or drag file to this area to upload</p>
-                      <p className="ant-upload-hint">Support for a single or bulk upload.</p>
-                    </Upload.Dragger>
-                  )}
-                </div>
-              </Form.Item>  
-              </Col>
-            </Row>
-          </Form>
-          <div
-            style={{
-              position: 'absolute',
-              bottom: 0,
-              width: '100%',
-              borderTop: '1px solid #e8e8e8',
-              padding: '10px 16px',
-              textAlign: 'right',
-              left: 0,
-              background: '#fff',
-              borderRadius: '0 0 4px 4px',
-            }}
-          >
-            <Button
+           
+            <div
               style={{
-                marginRight: 8,
+                position: 'absolute',
+                bottom: 0,
+                width: '100%',
+                borderTop: '1px solid #e8e8e8',
+                padding: '10px 16px',
+                textAlign: 'right',
+                left: 0,
+                background: '#fff',
+                borderRadius: '0 0 4px 4px',
               }}
-              onClick={this.onClose}
             >
-              Cancel
-            </Button>
-            <Button onClick={this.onClose} type="primary">Ajouter</Button>
-          </div>
+              <Button
+                style={{
+                  marginRight: 8,
+                }}
+                onClick={this.onClose}
+              >
+                Cancel
+              </Button>
+              <Button 
+                htmlType="submit"
+                type="primary"
+                onClick={this.handleSubmit}
+                disabled={hasErrors(getFieldsError())}
+              >
+                Ajouter
+              </Button>
+            </div>
+          </Form>
         </Drawer>
       </div>
     );
@@ -128,4 +149,7 @@ class AjoutClassForm extends React.Component {
 
 const RegisterForm = Form.create()(AjoutClassForm);
 
-export default RegisterForm;
+export default connect(
+  null,
+  { find, save }
+)(RegisterForm);

@@ -1,46 +1,18 @@
 import React from 'react';
-
-import ContactSearch from '../../components/contact/ContactSearch';
-import ContactProfile from '../../components/contact/ContactProfile';
-import ContactList from '../../components/contact/ContactList';
-import RegisterForm from './AjoutEtudForm';
+import { connect } from "react-redux";
 
 import { Layout, Card, Row, Col , Button } from 'antd';
 
-const {  Content, Sider } = Layout;
+import ContactSearch from '../../components/contact/ContactSearch';
+import EtudiantProfile from '../../components/contact/EtudiantProfile';
+import ContactList from '../../components/contact/ContactList';
+import RegisterForm from '../etudiant/AjoutEtudForm';
 
-const profs = [
-    {
-        id: 1,
-        firstName: 'fgfg',
-        lastName: '2122',
-        email: "norman.weaver@example.com",
-    },
-    {
-        id: 11,
-        firstName: 'test1',
-        lastName: 'last1',
-        email: "norman.weaver@example.com",
-    },
-    {
-        id: 12,
-        firstName: 'test2',
-        lastName: 'last1',
-        email: "norman.weaver@example.com",
-    },
-    {
-        id: 13,
-        firstName: 'test3',
-        lastName: 'last1',
-        email: "norman.weaver@example.com",
-    },
-    {
-        id: 19,
-        firstName: 'test4',
-        lastName: 'last1',
-        email: "norman.weaver@example.com",
-    }
-]
+// redux
+import { find as findEtudiants } from '../../actions/etudiant';
+import { getById as getClassById } from '../../actions/classe';
+
+const {  Content, Sider } = Layout;
 
 function filterContacts(contacts, search) {
     search = search.toUpperCase();
@@ -49,7 +21,7 @@ function filterContacts(contacts, search) {
       : contacts;
 }
 
-class Index extends React.Component {
+class Classe extends React.Component {
 
     constructor(props) {
         super(props);
@@ -57,33 +29,35 @@ class Index extends React.Component {
         this.state = {
           selectedId: -1,
           search: '',
-          profs: profs,
         }
-        this.onSearchInputChange = this.onSearchInputChange.bind(this);
 
+        this.onSearchInputChange = this.onSearchInputChange.bind(this);
+    }
+
+    componentDidMount() {
+        const classId = this.props.match.params.id;
+	    this.props.getClassById(classId);
+        this.props.findEtudiants({ classe: classId })
     }
 
     onSearchInputChange (event)  {
         this.setState({ search: event.target.value });
     }
 
- 
-
-      
     render() {
+        const selected = this.props.etudiants.filter(etudiant=>(etudiant._id === this.state.selectedId))
 
-        const selected = this.state.profs.filter(prof=>(prof.id === this.state.selectedId))
+        const selectedEtudiant = selected.length ? selected[0] : 'no etudiant selectioner';
 
-        const selectedProf = selected.length ? selected[0] : 'no prof selectioner';
-        //console.log('selectedProf', selectedProf)
 
-        const profs = filterContacts(this.state.profs, this.state.search);
+        const etudiants = filterContacts(this.props.etudiants, this.state.search);
 
         return (
 
             <Card bordered={false}>
-    
+                {this.props.classeEtudiant && (
                 <Content style={{ padding: '0 10px' }}>
+                    <h3>{this.props.classeEtudiant.name}</h3>
                     <Layout style={{ padding: '24px 0', background: '#fff' }}>
                         <Sider width={250} style={{ background: '#fff' }}>
                             <Row>
@@ -91,31 +65,39 @@ class Index extends React.Component {
                                     <ContactSearch value={this.state.search} onSearchInputChange={this.onSearchInputChange} />
                                 </Col>
                                 <Col span={12}>
-                                
-                               <RegisterForm />
+                                    <RegisterForm classe={this.props.classeEtudiant} />
                                 </Col>
                             </Row>
                             <ContactList 
-                                contacts={profs}
-                                handelSelect={ id => {
-                                    this.setState({selectedId: id});
+                                contacts={etudiants}
+                                handelSelect={ etudiant => {
+                                    this.setState({selectedId: etudiant._id});
                                 }}
                                 selectedId = {this.state.selectedId}
                             />
                         </Sider>
                         <Content style={{ padding: '0 80px', margin: '70px 80px' , minHeight: 280, borderLeft:'1px solid rgba(128, 128, 128, 0.28)' }}>
-                            <ContactProfile selectedProf = {selectedProf}></ContactProfile>
+                            <EtudiantProfile classe={this.props.classeEtudiant} selectedEtudiant={selectedEtudiant}></EtudiantProfile>
                         </Content>
                     </Layout>
                 </Content>
+                )}
                     
             </Card>
 
         )
     };
 
-} 
+}
 
-export default Index;
+const mapStateToProps = state => ({
+    etudiants: state.etudiant.list,
+    classeEtudiant: state.classe.classeCurrent
+});
+
+export default connect(
+    mapStateToProps,
+    { findEtudiants, getClassById }
+)(Classe);
 
 

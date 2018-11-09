@@ -1,51 +1,26 @@
 import React from 'react';
-
-import ContactSearch from '../../components/contact/ContactSearch';
-import ContactProfile from '../../components/contact/ContactProfile';
-import ContactList from '../../components/contact/ContactList';
-import RegisterForm from './AjouterModuleForm';
+import { connect } from "react-redux";
 
 import { Layout, Card, Row, Col , Button } from 'antd';
+import { List, message, Avatar, Spin } from 'antd';
+
+import ContactSearch from '../../components/contact/ContactSearch';
+import ContactList from '../../components/contact/ContactList';
+import ModuleProfile from '../../components/contact/ModuleProfile';
+import ModuleList from '../../components/contact/ModuleList';
+import RegisterForm from './AjouterModuleForm';
+
+// redux
+import { find } from '../../actions/module';
+import { getById as getClasseById } from '../../actions/classe';
+import { getById as getProfById } from '../../actions/prof';
 
 const {  Content, Sider } = Layout;
-
-const profs = [
-    {
-        id: 1,
-        firstName: 'fgfg',
-        lastName: '2122',
-        email: "norman.weaver@example.com",
-    },
-    {
-        id: 11,
-        firstName: 'test1',
-        lastName: 'last1',
-        email: "norman.weaver@example.com",
-    },
-    {
-        id: 12,
-        firstName: 'test2',
-        lastName: 'last1',
-        email: "norman.weaver@example.com",
-    },
-    {
-        id: 13,
-        firstName: 'test3',
-        lastName: 'last1',
-        email: "norman.weaver@example.com",
-    },
-    {
-        id: 19,
-        firstName: 'test4',
-        lastName: 'last1',
-        email: "norman.weaver@example.com",
-    }
-]
 
 function filterContacts(contacts, search) {
     search = search.toUpperCase();
     return search
-      ? contacts.filter(contact => contact.lastName.toUpperCase().includes(search))
+      ? contacts.filter(contact => contact.name.toUpperCase().includes(search))
       : contacts;
 }
 
@@ -57,27 +32,27 @@ class Index extends React.Component {
         this.state = {
           selectedId: -1,
           search: '',
-          profs: profs,
         }
         this.onSearchInputChange = this.onSearchInputChange.bind(this);
+    }
 
+
+    async componentDidMount() {
+	    this.props.find()
     }
 
     onSearchInputChange (event)  {
         this.setState({ search: event.target.value });
     }
-
- 
-
       
     render() {
 
-        const selected = this.state.profs.filter(prof=>(prof.id === this.state.selectedId))
+        const selected = this.props.modules.filter(module=>(module._id === this.state.selectedId))
 
-        const selectedProf = selected.length ? selected[0] : 'no prof selectioner';
-        //console.log('selectedProf', selectedProf)
-
-        const profs = filterContacts(this.state.profs, this.state.search);
+        const selectedModule = selected.length ? selected[0] : 'no module selectioner';
+        const modules = filterContacts(this.props.modules, this.state.search);
+        console.log("props", this.props.modules);
+        console.log("module", modules);
 
         return (
 
@@ -95,27 +70,37 @@ class Index extends React.Component {
                                <RegisterForm />
                                 </Col>
                             </Row>
-                            <ContactList 
-                                contacts={profs}
-                                handelSelect={ id => {
-                                    this.setState({selectedId: id});
+
+                            <ModuleList
+                                modules={modules}
+                                handelSelect={ module => {
+                                    this.setState({selectedId: module._id});
+                                    this.props.getClasseById(module.classe);
+                                    this.props.getProfById(module.professeur);
                                 }}
-                                selectedId = {this.state.selectedId}
+                                selectedId = {this.state.selectedId} 
                             />
                         </Sider>
                         <Content style={{ padding: '0 80px', margin: '70px 80px' , minHeight: 280, borderLeft:'1px solid rgba(128, 128, 128, 0.28)' }}>
-                            <ContactProfile selectedProf = {selectedProf}></ContactProfile>
+                            <ModuleProfile selectedModule={selectedModule} classe={this.props.classeModule} prof={this.props.profModule} />
                         </Content>
                     </Layout>
                 </Content>
                     
             </Card>
-
         )
     };
-
 } 
 
-export default Index;
+const mapStateToProps = state => ({
+    modules: state.module.list,
+    classeModule: state.classe.classeCurrent,
+    profModule: state.prof.profCurrent
+  });
+
+  export default connect(
+    mapStateToProps,
+    { find, getClasseById, getProfById }
+  )(Index);
 
 
