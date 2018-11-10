@@ -1,9 +1,5 @@
-import path from 'path';
 import React from 'react';
 import { Switch, Route } from 'react-router-dom';
-
-import HelloPage from '../containers/HelloPage';
-import ProfilePage from '../containers/ProfilePage';
 
 
 import ClasseList from '../containers/classe/ClasseList';
@@ -11,7 +7,6 @@ import Classe from '../containers/classe/Classe';
 
 import IndexProf from '../containers/professeur/Index';
 import IndexModule from '../containers/module/Index';
-import IndexEtudiant from '../containers/classe/Classe';
 
 
 
@@ -30,8 +25,8 @@ const routes = [
   // Classes router
   {
     path: '/classes/:id',
-    icon: "user",
-    name: "Etudiant",
+    // icon: "user",
+    // name: "Etudiant",
     component: Classe
   },
   {
