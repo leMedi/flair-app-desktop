@@ -15,6 +15,11 @@ class AjouterProfForm extends React.Component {
     visible: false,
   };
 
+  componentDidMount() {
+    // To disabled submit button at the beginning.
+    this.props.form.validateFields();
+  }
+
   handleSubmit = (event) => {
 
     event.preventDefault();
