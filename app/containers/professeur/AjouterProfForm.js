@@ -113,14 +113,10 @@ class AjouterProfForm extends React.Component {
                   help={emailError || ''}  
                 >
                   {getFieldDecorator('email', {
-<<<<<<< HEAD
                     rules: [
                       { type: 'email', message: 'The input is not valid E-mail!' },
                       { required: true, message: 'Please input your E-mail!' },
                     ],
-=======
-                    rules: [{ required: true, message: 'Please enter the email' }],
->>>>>>> 1caad3d64e29e25d3d752058f6a3bc6966ba1759
                   })(
                     <Input placeholder="please enter email" onChange={this.handleChange} />
                   )}
