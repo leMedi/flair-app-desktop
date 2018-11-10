@@ -11,6 +11,7 @@ function hasErrors(fieldsError) {
 }
 
 class AjouterProfForm extends React.Component {
+
   state = { 
     visible: false,
   };
@@ -56,6 +57,7 @@ class AjouterProfForm extends React.Component {
     const firstNameError = isFieldTouched('firstName') && getFieldError('firstName');
     const lastNameError = isFieldTouched('lastName') && getFieldError('lastName');
     const emailError = isFieldTouched('email') && getFieldError('email');
+    const phoneError = isFieldTouched('phone') && getFieldError('phone');
 
     return (
       <div>
@@ -73,8 +75,7 @@ class AjouterProfForm extends React.Component {
             height: 'calc(100% - 55px)',
             overflow: 'auto',
             paddingBottom: 53,
-          }}
-        >
+          }}>
           <Form layout="vertical" hideRequiredMark onSubmit={this.handleSubmit}>
             <Row gutter={16}>
               <Col span={12}>
@@ -91,11 +92,11 @@ class AjouterProfForm extends React.Component {
                 </Form.Item>
               </Col>
               <Col span={12}>
-              <Form.Item
+                <Form.Item
                 label="Last Name"
                 validateStatus={lastNameError ? 'error' : ''}
                 help={lastNameError || ''}
-              >
+                >
                 {getFieldDecorator('lastName', {
                     rules: [{ required: true, message: 'Please enter lastName' }],
                   })(
@@ -112,48 +113,65 @@ class AjouterProfForm extends React.Component {
                   help={emailError || ''}  
                 >
                   {getFieldDecorator('email', {
+<<<<<<< HEAD
                     rules: [
                       { type: 'email', message: 'The input is not valid E-mail!' },
                       { required: true, message: 'Please input your E-mail!' },
                     ],
+=======
+                    rules: [{ required: true, message: 'Please enter the email' }],
+>>>>>>> 1caad3d64e29e25d3d752058f6a3bc6966ba1759
                   })(
                     <Input placeholder="please enter email" onChange={this.handleChange} />
+                  )}
+                </Form.Item>
+              </Col>
+              <Col span={12}>
+                <Form.Item
+                  label="Phone Number"
+                  validateStatus={phoneError ? 'error' : ''}
+                  help={phoneError || ''}  
+                >
+                  {getFieldDecorator('phone', {
+                    rules: [{ required: true, message: 'Please enter the phone number' }],
+                  })(
+                    <Input placeholder="please enter phone" onChange={this.handleChange} />
                   )}
                 </Form.Item>
               </Col>
             </Row>
             
             <div
-            style={{
-              position: 'absolute',
-              bottom: 0,
-              width: '100%',
-              borderTop: '1px solid #e8e8e8',
-              padding: '10px 16px',
-              textAlign: 'right',
-              left: 0,
-              background: '#fff',
-              borderRadius: '0 0 4px 4px',
-            }}
-          >
-            <Button
               style={{
-                marginRight: 8,
+                position: 'absolute',
+                bottom: 0,
+                width: '100%',
+                borderTop: '1px solid #e8e8e8',
+                padding: '10px 16px',
+                textAlign: 'right',
+                left: 0,
+                background: '#fff',
+                borderRadius: '0 0 4px 4px',
               }}
-              onClick={this.onClose}
-            > 
-              Cancel
-            </Button>
-           
-            <Button
-              htmlType="submit"
-              type="primary"
-              onClick={this.handleSubmit}
-              disabled={hasErrors(getFieldsError())}
             >
-              Submit
-            </Button>
-          </div>
+              <Button
+                style={{
+                  marginRight: 8,
+                }}
+                onClick={this.onClose}
+              > 
+                Cancel
+              </Button>
+            
+              <Button
+                htmlType="submit"
+                type="primary"
+                onClick={this.handleSubmit}
+                disabled={hasErrors(getFieldsError())}
+              >
+                Submit
+              </Button>
+            </div>
           </Form>
           
         </Drawer>
@@ -172,5 +190,3 @@ export default connect(
   null,
   { find, save }
 )(RegisterForm);
-
-// export default RegisterForm;

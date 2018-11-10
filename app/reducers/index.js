@@ -5,6 +5,9 @@ import counter from './counter';
 import theme from './theming';
 import user from './user';
 import prof from './prof';
+import etudiant from './etudiant';
+import classe from './classe';
+import module from './module';
 
 export default function createRootReducer(history: {}) {
   const routerReducer = connectRouter(history)(() => {});
@@ -16,6 +19,9 @@ export default function createRootReducer(history: {}) {
       theme,
       currentUser : user,
       prof,
+      etudiant,
+      classe,
+      module,
     })
   );
 }

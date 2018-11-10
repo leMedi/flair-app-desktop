@@ -7,10 +7,11 @@ import ProfilePage from '../containers/ProfilePage';
 
 
 import ClasseList from '../containers/classe/ClasseList';
+import Classe from '../containers/classe/Classe';
 
 import IndexProf from '../containers/professeur/Index';
 import IndexModule from '../containers/module/Index';
-import IndexEtudiant from '../containers/etudiant/Index';
+import IndexEtudiant from '../containers/classe/Classe';
 
 
 
@@ -18,96 +19,34 @@ import IndexEtudiant from '../containers/etudiant/Index';
 
 const routes = [
   {
-    path: '/',
-    component: '../layouts/BasicLayout',
-    icon: "dashboard",
-    name: "Dashboard",
-    // Routes: ['src/pages/Authorized'],
-    // authority: ['admin', 'user'],
-    routes: [
-      // dashboard
-      { 
-        path: '/hh',
-        name: "Test",
-        icon: "dashboard",
-        component: HelloPage
-      },
-      { 
-        path: '/profile',
-        name: "Profile",
-        icon: "dashboard",
-        component: ProfilePage
-      }
-    ],
-  },
-  {
-    path: '/Professeur',
-    component: '../layouts/BasicLayout',
+    path: '/profs',
     icon: "user",
     name: "Professeur",
-    // Routes: ['src/pages/Authorized'],
-    // authority: ['admin', 'user'],
-    routes: [
-      // professeur
-      { 
-        path: '/Professeur',
-        name: "Professeur",
-        icon: "profile",
-        component: IndexProf
-      }
-    ],
+    component: IndexProf
   },
+  
+
+
+  // Classes router
   {
-    path: '/Etudiant',
-    component: '../layouts/BasicLayout',
+    path: '/classes/:id',
     icon: "user",
     name: "Etudiant",
-    // Routes: ['src/pages/Authorized'],
-    // authority: ['admin', 'user'],
-    routes: [
-      // Etudiant
-      { 
-        path: '/Etudiant',
-        name: "Etudiant",
-        icon: "profile",
-        component: IndexEtudiant
-      }
-    ],
+    component: Classe
   },
   {
-    path: '/Classe',
-    component: '../layouts/BasicLayout',
-    icon: "user",
-    name: "Classe",
-    // Routes: ['src/pages/Authorized'],
-    // authority: ['admin', 'user'],
-    routes: [
-      // classe
-      { 
-        path: '/classList',
-        name: "ClassList",
-        icon: "profile",
-        component: ClasseList
-      },
-    ],
+    path: '/classes',
+    icon: "profile",
+    name: "Classes",
+    component: ClasseList
   },
-  {
-    path: '/Module',
-    component: '../layouts/BasicLayout',
-    icon: "user",
-    name: "Module",
-    // Routes: ['src/pages/Authorized'],
-    // authority: ['admin', 'user'],
-    routes: [
-      // Module
-      { 
-        path: '/moduleList',
-        name: "Module",
-        icon: "profile",
-        component: IndexModule
-      }
+  
 
-    ],
+  {
+    path: '/modules',
+    icon: "profile",
+    name: "Modules",
+    component: IndexModule
   },
 ];
 
@@ -122,15 +61,13 @@ export class Router extends React.Component {
       <Switch>
         {
           routes.map(section => (
-            section.routes.map(route => (
-              <Route
+            <Route
                 exact
-                key={route.path}
-                path={route.path}
-                component={route.component}
+                key={section.path}
+                path={section.path}
+                component={section.component}
               />
-            ))  
-          ))}
+          ))
         }
       </Switch>
     );

@@ -1,29 +1,28 @@
 import React, { Component } from 'react';
+import { connect } from "react-redux";
+
 import { Button ,Card, Table, Divider, Tag } from 'antd';
 
 import RegisterForm from './AjoutClassForm';
 
-
+import { find } from '../../actions/classe';
 
 
 const columns = [{
-    title: 'Name',
+    title: 'filiere',
+    dataIndex: 'filiere',
+    key: 'filiere',
+    // render: text => <a href="javascript:;">{text}</a>,
+  }, {
+    title: 'annee',
+    dataIndex: 'annee',
+    key: 'annee',
+  }, {
+    title: 'name',
     dataIndex: 'name',
     key: 'name',
-    render: text => <a href="javascript:;">{text}</a>,
-  }, {
-    title: 'Age',
-    dataIndex: 'age',
-    key: 'age',
-  }, {
-    title: 'Address',
-    dataIndex: 'address',
-    key: 'address',
-  }, {
-    title: 'Email',
-    dataIndex: 'email',
-    key: 'email',
-  }, {
+  },
+  {
     title: 'Action',
     key: 'action',
     render: (text, record) => (
@@ -35,46 +34,53 @@ const columns = [{
     ),
   }];
 
-  const data = [{
-    key: '1',
-    name: 'John Brown',
-    age: 32,
-    address: 'New York No. 1 Lake Park',
-    email: 'jhon@brown.com'
-  }, {
-    key: '2',
-    name: 'Jim Green',
-    age: 42,
-    address: 'London No. 1 Lake Park',
-    email: 'jim@brown.com'
-  }, {
-    key: '3',
-    name: 'Joe Black',
-    age: 32,
-    address: 'Sidney No. 1 Lake Park',
-    email: 'Joe@black.com',
-  }];
-
   class ClasseList extends Component {
+
+    constructor(props) {
+      super(props);
+    }
+
     componentDidMount() {
-      
+	    this.props.find();
     }
   
     render() {
+
+      const classes = this.props.classes;
       
       return (
         
           <Card bordered={false}>
 
-
             <RegisterForm />
             
-            <Table columns={columns} dataSource={data} />
+            <Table
+              columns={columns}
+              dataSource={classes}
+              rowKey="_id"
+              onRow={(classe) => {
+                return {
+                  onClick: () => { // click row
+                    this.props.history.push({
+                      pathname: '/classes/' + classe._id,
+                    })
+                  } 
+                };
+              }}
+            />
             
           </Card>
         
       );
     }
   }
+
+  const mapStateToProps = state => ({
+    classes: state.classe.list
+  });
+
+  export default connect(
+    mapStateToProps,
+    { find }
+  )(ClasseList);
   
-  export default ClasseList;
