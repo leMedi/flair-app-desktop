@@ -7,6 +7,12 @@ import SiderMenu from '../components/SiderMenu';
 import logo from '../assets/logo.svg';
 import routes, { Router as DashboardRouter } from '../config/router.dashboard';
 import Header from '../components/Dashboard/Header';
+import HomeTemp from '../containers/HomeTemp';
+import { getModulesByProf } from '../actions/module';
+
+
+import { getById as fetchUser } from '../actions/user';
+
 
 const { Content } = Layout;
 
@@ -42,6 +48,8 @@ function formatter(data, parentAuthority, parentName) {
     .filter(item => item);
 }
 
+
+
 const memoizeOneFormatter = memoizeOne(formatter, isEqual);
 
 class DashboardLayout extends Component {
@@ -58,7 +66,9 @@ class DashboardLayout extends Component {
       menuData: memoizeOneFormatter(routes),
     };
 
-    // call props.fetchUser(Static-id)
+    this.props.fetchUser('412e4b67-2ecb-4194-9210-fbb357933752', (user) => {
+      this.props.getModulesByProf(user._id)
+    });
   }
 
   
@@ -99,6 +109,9 @@ class DashboardLayout extends Component {
 
     const { isMobile, menuData, collapsed } = this.state;
     const isTop = PropsLayout === 'topmenu';
+    
+    const currentUser = this.props.currentUser;
+    console.log('currentUser' ,currentUser);
 
     return(
       <Layout>
@@ -139,11 +152,13 @@ class DashboardLayout extends Component {
 
 function mapStateToProps(state) {
   return {
-    ...state.theme
+    ...state.theme,
+    currentUser: state.user.currentUser,
+    modules: state.module.list
   };
 }
 
 export default connect(
   mapStateToProps,
-  {/* fecthUser */}
+  {fetchUser, getModulesByProf}
 )(DashboardLayout);

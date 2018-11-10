@@ -8,6 +8,9 @@ export const TYPES = {
   MODULE_SAVE: 'MODULE_SAVE',
   MODULE_SAVE_ERROR: 'MODULE_SAVE_ERROR',
 
+  MODULE_GETPROFBYID: 'MODULE_GETPROFBYID',
+  MODULE_GETPROFBYID_ERROR: 'MODULE_GETPROFBYID_ERROR',
+
 }
 
 export function find(criteria) {
@@ -43,6 +46,31 @@ export function save(module, cb) {
         type: TYPES.MODULE_SAVE_ERROR
       })
       return cb(err)
+    });
+  };
+}
+
+export function getModulesByProf(profid) {
+  return (dispatch) => {
+    console.log('profid', profid);
+    //clear var
+    dispatch({
+      type: TYPES.MODULE_GETPROFBYID,
+      payload: null
+    })
+    return _find({professeur: profid})
+    .then(res => {
+      console.log('before dispatch', res)
+      dispatch({
+        type: TYPES.MODULE_GETPROFBYID,
+        payload: res.docs
+      })
+    })
+    .catch(err => {
+      console.log(err)
+      dispatch({
+        type: TYPES.MODULE_GETPROFBYID_ERROR
+      })
     });
   };
 }

@@ -13,7 +13,7 @@ export default function profReducer(state = initState, action) {
         list: action.payload
       }
     case TYPES.PROF_GETBYID:
-    return {
+      return {
       ...state,
       profCurrent: action.payload
     }

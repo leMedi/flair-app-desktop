@@ -138,7 +138,7 @@ export class GlobalHeaderRight extends PureComponent {
             emptyImage="https://gw.alipayobjects.com/zos/rmsportal/HsIsxMZiWKrNUavQUXqx.svg"
           />
         </NoticeIcon> */}
-        {currentUser.name ? (
+        {/* {currentUser.name ? (
           <Dropdown overlay={menu}>
             <span className={`${styles.action} ${styles.account}`}>
               <Avatar
@@ -152,7 +152,7 @@ export class GlobalHeaderRight extends PureComponent {
           </Dropdown>
         ) : (
           <Spin size="small" style={{ marginLeft: 8, marginRight: 8 }} />
-        )}
+        )} */}
       </div>
     );
   }

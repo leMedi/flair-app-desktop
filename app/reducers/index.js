@@ -17,7 +17,7 @@ export default function createRootReducer(history: {}) {
       router: routerReducer,
       counter,
       theme,
-      currentUser : user,
+      user,
       prof,
       etudiant,
       classe,

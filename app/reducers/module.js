@@ -1,7 +1,9 @@
 import { TYPES } from '../actions/module'
 
 const initState = {
-  list: []
+  list: [],
+  modulesProf : [],
+
 };
 
 export default function moduleReducer(state = initState, action) {
@@ -11,6 +13,11 @@ export default function moduleReducer(state = initState, action) {
         ...state,
         list: action.payload
       }
+    case TYPES.MODULE_GETPROFBYID:
+    return {
+      ...state,
+      modulesProf: action.payload
+    }
     default:
       return state;
   }
