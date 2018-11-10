@@ -9,18 +9,25 @@ import IndexProf from '../containers/professeur/Index';
 import IndexModule from '../containers/module/Index';
 
 
+import HomeTemp from '../containers/HomeTemp'
+
 
 
 
 const routes = [
+  {
+    path: '/dash',
+    icon: "user",
+    name: "DashBoard",
+    component: HomeTemp
+  },
+
   {
     path: '/profs',
     icon: "user",
     name: "Professeur",
     component: IndexProf
   },
-  
-
 
   // Classes router
   {

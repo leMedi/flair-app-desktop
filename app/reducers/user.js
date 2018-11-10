@@ -1,5 +1,5 @@
 const initState = {
-  name: null, // theme for nav menu
+  currentUser: null,
 };
 
 export default function userReducer(state = initState, action) {

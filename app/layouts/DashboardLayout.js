@@ -46,12 +46,20 @@ const memoizeOneFormatter = memoizeOne(formatter, isEqual);
 
 class DashboardLayout extends Component {
 
-  state = {
-    // rendering: true,
-    isMobile: false,
-    collapsed: false,
-    menuData: memoizeOneFormatter(routes),
-  };
+  
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      // rendering: true,
+      isMobile: false,
+      collapsed: false,
+      menuData: memoizeOneFormatter(routes),
+    };
+
+    // call props.fetchUser(Static-id)
+  }
 
   
   getLayoutStyle = () => {
@@ -137,5 +145,5 @@ function mapStateToProps(state) {
 
 export default connect(
   mapStateToProps,
-  {}
+  {/* fecthUser */}
 )(DashboardLayout);
