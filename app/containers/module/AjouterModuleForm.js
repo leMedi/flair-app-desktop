@@ -115,7 +115,7 @@ class AjouterModuleForm extends React.Component {
                   help={hrsCoursError || ''}
                 >
                   {getFieldDecorator('hrsCours', {
-                    rules: [{ required: true, message: 'please enter last name' }],
+                    rules: [{ required: true, message: 'Field is required' }],
                   })( <Input />)}
                 </Form.Item>
               </Col>
@@ -126,7 +126,7 @@ class AjouterModuleForm extends React.Component {
                   help={hrsTDError || ''}
                 >
                   {getFieldDecorator('hrsTD', {
-                    rules: [{ required: true, message: 'please enter last name' }],
+                    rules: [{ required: true, message: 'Field is required' }],
                   })(<Input />)}
                 </Form.Item>
               </Col>
@@ -137,7 +137,7 @@ class AjouterModuleForm extends React.Component {
                   help={hrsTPError || ''}
                 >
                   {getFieldDecorator('hrsTP', {
-                    rules: [{ required: true, message: 'please enter last name' }],
+                    rules: [{ required: true, message: 'Field is required' }],
                   })(<Input />)}
                 </Form.Item>
               </Col>
@@ -150,7 +150,7 @@ class AjouterModuleForm extends React.Component {
                   help={professeurError || ''}
                 >
                   {getFieldDecorator('professeur', {
-                    rules: [{ required: true, message: 'Please select an Professeur' }],
+                    rules: [{ required: true, message: 'Please select a Professeur' }],
                   })(
                     <Select placeholder="Please select an Professeur">
                       {profList}
@@ -165,7 +165,7 @@ class AjouterModuleForm extends React.Component {
                   help={classeError || ''}
                 >
                   {getFieldDecorator('classe', {
-                    rules: [{ required: true, message: 'Please select an Classe' }],
+                    rules: [{ required: true, message: 'Please select a Classe' }],
                   })(
                     <Select placeholder="Please select an Classe">
                       {classeList}
