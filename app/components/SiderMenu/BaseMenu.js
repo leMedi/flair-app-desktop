@@ -80,8 +80,7 @@ export default class BaseMenu extends PureComponent {
     
     // if pathname can't match, use the nearest parent's key
     // let selectedKeys = this.getSelectedMenuKeys(pathname);
-
-    const { handleOpenChange, style, menuData } = this.props;
+    const { handleOpenChange, style, menuData, menuModulesData } = this.props;
 
     return (
       <Menu
@@ -92,6 +91,10 @@ export default class BaseMenu extends PureComponent {
         style={style}
         className={mode === 'horizontal' ? 'top-nav-menu' : ''}
       >
+        <div className="ant-menu-item-group-title" title="Module">Module</div>
+        {this.getMenuItems(menuModulesData)}
+
+        <div className="ant-menu-item-group-title" title="Admin">Admin</div>
         {this.getMenuItems(menuData)}
       </Menu>
     );

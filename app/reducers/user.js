@@ -3,6 +3,13 @@ import { TYPES } from '../actions/user';
 
 const initState = {
   currentUser: null,
+  modules: [
+    {
+      path: '/module/NomModule',
+      icon: "user",
+      name: "NomModule",
+    },
+  ]
 };
 
 export default function userReducer(state = initState, action) {

@@ -19,6 +19,8 @@ class SiderMenu extends PureComponent {
       [styles.light]: theme === 'light',
     });
 
+    console.log("menu modules", this.props.menuModulesData);
+
     return (
       <Sider
         trigger={null}

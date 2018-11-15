@@ -105,6 +105,7 @@ class DashboardLayout extends Component {
       children,
       location,
       location: { pathname },
+      currentUserModules,
     } = this.props;
 
     const { isMobile, menuData, collapsed } = this.state;
@@ -122,6 +123,7 @@ class DashboardLayout extends Component {
             onCollapse={this.handleMenuCollapse}
             collapsed={collapsed}
             menuData={menuData}
+            menuModulesData={currentUserModules}
             theme={navTheme}
             isMobile={isMobile}
             location={location}
@@ -154,7 +156,9 @@ function mapStateToProps(state) {
   return {
     ...state.theme,
     currentUser: state.user.currentUser,
+    currentUserModules: state.user.modules,
     modules: state.module.list
+    
   };
 }
 
