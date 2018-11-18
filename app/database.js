@@ -26,5 +26,6 @@ export default db;
 
 // db api
 export const store = (doc) => (db.post(doc));
+export const bulkStore = (docs, options) => (db.bulkDocs(docs, options));
 export const find = (request) => (db.find(request));
 export const getById = (id) => (db.get(id));
