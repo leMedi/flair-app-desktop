@@ -1,12 +1,10 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { Layout } from 'antd';
-import pathToRegexp from 'path-to-regexp';
 import classNames from 'classnames';
 import { Link } from 'react-router-dom';
 import styles from './index.less';
-import BaseMenu, { getMenuMatches } from './BaseMenu';
-import { urlToList } from '../_utils/pathTools';
+import BaseMenu from './BaseMenu';
 
 const { Sider } = Layout;
 

@@ -1,13 +1,10 @@
 import React, { PureComponent } from 'react';
-import { Menu, Icon, MenuItemGroup } from 'antd';
+import { Menu, Icon } from 'antd';
 import { Link } from 'react-router-dom';
 import isEqual from 'lodash/isEqual';
 import pathToRegexp from 'path-to-regexp';
 import memoizeOne from 'memoize-one';
-import { urlToList } from '../_utils/pathTools';
 import styles from './index.less';
-
-const { SubMenu } = Menu;
 
 // Allow menu.js config icon as string or ReactNode
 //   icon: 'setting',
@@ -75,7 +72,7 @@ export default class BaseMenu extends PureComponent {
     const {
       theme,
       mode,
-      location: { pathname },
+      // location: { pathname },
     } = this.props;
     
     // if pathname can't match, use the nearest parent's key
