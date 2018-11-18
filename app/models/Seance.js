@@ -1,10 +1,10 @@
-import {store, find as _find, getById as _getById, remove as _remove} from '../database'
+import {store, find as _find, getById as _getById} from '../database'
 
 
 export const save = (doc) => {
   return store({
     ...doc,
-    type: 'module'
+    type: 'seance'
   })
 }
 
@@ -19,9 +19,7 @@ export const find = (criteria = {}) => (
   _find({
     selector: {
       ...criteria,
-      type: 'module'
+      type: 'seance'
     },
   })
 )
-
-export const remove = _remove;
