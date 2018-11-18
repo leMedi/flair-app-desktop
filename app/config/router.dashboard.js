@@ -7,6 +7,8 @@ import Classe from '../containers/classe/Classe';
 
 import IndexProf from '../containers/professeur/Index';
 import IndexModule from '../containers/module/Index';
+import Module from '../containers/module/Module';
+import Seance from '../containers/seance/Seance';
 
 
 import HomeTemp from '../containers/HomeTemp'
@@ -42,14 +44,25 @@ const routes = [
     name: "Classes",
     component: ClasseList
   },
-  
 
+  {
+    path: '/modules/:id',
+    component: Module
+  },
+  //Module Router
   {
     path: '/modules',
     icon: "profile",
     name: "Modules",
     component: IndexModule
   },
+
+  {
+    path: '/seances/:id',
+    component: Seance
+  },
+
+  
 ];
 
 

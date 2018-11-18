@@ -1,4 +1,4 @@
-import { find as _find, save as _save } from '../models/Module'
+import { find as _find, save as _save, getById as _getById} from '../models/Module'
 
 
 export const TYPES = {
@@ -10,6 +10,9 @@ export const TYPES = {
 
   MODULE_GETPROFBYID: 'MODULE_GETPROFBYID',
   MODULE_GETPROFBYID_ERROR: 'MODULE_GETPROFBYID_ERROR',
+
+  MODULE_GETBYID: 'MODULE_GETBYID',
+  MODULE_GETBYID_ERROR: 'MODULE_GETBYID_ERROR',
 
 }
 
@@ -70,6 +73,31 @@ export function getModulesByProf(profid) {
       console.log(err)
       dispatch({
         type: TYPES.MODULE_GETPROFBYID_ERROR
+      })
+    });
+  };
+}
+
+export function getById(id) {
+  return (dispatch) => {
+    //clear var
+    console.log('ModuleId', id);
+    dispatch({
+      type: TYPES.MODULE_GETBYID,
+      payload: null
+    })
+    return _getById(id)
+    .then(res => {
+      console.log('before module dispatch', res)
+      dispatch({
+        type: TYPES.MODULE_GETBYID,
+        payload: res
+      })
+    })
+    .catch(err => {
+      console.log(err)
+      dispatch({
+        type: TYPES.MODULE_GETBYID_ERROR
       })
     });
   };

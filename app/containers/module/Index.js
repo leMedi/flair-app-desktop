@@ -44,7 +44,7 @@ class Index extends React.Component {
     onSearchInputChange (event)  {
         this.setState({ search: event.target.value });
     }
-      
+
     render() {
 
         const selected = this.props.modules.filter(module=>(module._id === this.state.selectedId))
