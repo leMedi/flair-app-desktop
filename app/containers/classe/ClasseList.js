@@ -1,18 +1,33 @@
 import React, { Component } from 'react';
 import { connect } from "react-redux";
 
-import { Button ,Card, Table, Divider, Tag } from 'antd';
+import { Card, Table, Divider, Icon, Popconfirm, message } from 'antd';
 
 import RegisterForm from './AjoutClassForm';
 
 import { find } from '../../actions/classe';
+import { removeClasse } from '../../models/Classe';
 
 
-const columns = [{
+type Props = {
+  getAllClasses: () => Promise,
+  classes: Array,
+  history: {
+    push: ({ pathname: string }) => Promise
+  }
+};
+
+class ClasseList extends Component<Props> {
+
+  componentDidMount() {
+    const { getAllClasses } = this.props;
+    getAllClasses();
+  }
+
+  columns = [{
     title: 'filiere',
     dataIndex: 'filiere',
     key: 'filiere',
-    // render: text => <a href="javascript:;">{text}</a>,
   }, {
     title: 'annee',
     dataIndex: 'annee',
@@ -27,60 +42,64 @@ const columns = [{
     key: 'action',
     render: (text, record) => (
       <span>
-        <a href="javascript:;">Edit </a>
+        <a>Edit</a>
         <Divider type="vertical" />
-        <a href="javascript:;">Delete</a>
+        <Popconfirm
+          title="Vous êtes sur？"
+          icon={<Icon type="question-circle-o" style={{ color: 'red' }} />}
+          okText="Oui" 
+          cancelText="Non"
+          onConfirm={(e)=>{e.stopPropagation(); this.deleteClasse(record)}}
+          >
+          <a href="#" onClick={(e) => e.stopPropagation()}>Delete</a>
+        </Popconfirm>
       </span>
     ),
   }];
 
-  class ClasseList extends Component {
-
-    constructor(props) {
-      super(props);
-    }
-
-    componentDidMount() {
-	    this.props.find();
-    }
-  
-    render() {
-
-      const classes = this.props.classes;
-      
-      return (
-        
-          <Card bordered={false}>
-
-            <RegisterForm />
-            
-            <Table
-              columns={columns}
-              dataSource={classes}
-              rowKey="_id"
-              onRow={(classe) => {
-                return {
-                  onClick: () => { // click row
-                    this.props.history.push({
-                      pathname: '/classes/' + classe._id,
-                    })
-                  } 
-                };
-              }}
-            />
-            
-          </Card>
-        
-      );
-    }
+  deleteClasse(classe) {
+    const { getAllClasses } = this.props;
+    removeClasse(classe).then(() => (
+      getAllClasses() // update classes list after delete
+    )).catch((err) => {message.error(`Couldn't delete Classe: ${err.message}`)})
+    return false;
   }
 
-  const mapStateToProps = state => ({
-    classes: state.classe.list
-  });
+  render() {
 
-  export default connect(
-    mapStateToProps,
-    { find }
-  )(ClasseList);
+    const { classes, history } = this.props;
+    
+    return (
+      
+        <Card bordered={false}>
+
+          <RegisterForm />
+          
+          <Table
+            columns={this.columns}
+            dataSource={classes}
+            rowKey="_id"
+            onRow={(classe) => ({
+              onClick: () => ( // click row
+                history.push({
+                  pathname: `/classes/${classe._id}`
+                })
+              ) 
+            })}
+          />
+          
+        </Card>
+      
+    );
+  }
+}
+
+const mapStateToProps = state => ({
+  classes: state.classe.list
+});
+
+export default connect(
+  mapStateToProps,
+  { getAllClasses: find }
+)(ClasseList);
   

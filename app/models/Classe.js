@@ -1,4 +1,4 @@
-import {store, find as _find, getById as _getById, remove as _remove} from '../database'
+import db, {store, find as _find, getById as _getById, remove as _remove, bulkStore} from '../database'
 
 
 export const save = (doc) => (
@@ -8,8 +8,7 @@ export const save = (doc) => (
   })
 )
 
-export const getById = (id) => {
-  id = id ? id : '';
+export const getById = (id = '') => {
   return _getById(id);
   // .then (res => cb(null, res))
   // .catch(err => cb(err))
@@ -24,4 +23,22 @@ export const find = (criteria = {}) => (
   })
 )
 
-export const remove = _remove;
+export const removeClasse = (classe) =>{
+  console.log('classe', classe)
+  // fetch students in class
+  return _find({
+    selector: {
+      classe: classe._id,
+      type: 'etudiant'
+    }
+  }).then((result) =>{
+    // mark students for delete
+    const toBeDeleted = result.docs.map(etudiant => Object.assign(etudiant, {_deleted: true}))
+    
+    // mark class to be deleted too
+    toBeDeleted.push(Object.assign(classe, {_deleted: true}))
+
+    console.log('etudiants', toBeDeleted);
+    return bulkStore(toBeDeleted) // delete
+  })
+}
