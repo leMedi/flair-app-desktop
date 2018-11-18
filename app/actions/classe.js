@@ -31,23 +31,23 @@ export function find(criteria) {
 }
 
 
-export function save(classe, cb) {
-  return (dispatch) => {
+export function save(classe) {
+  return (dispatch) => (
     _save(classe)
     .then(res => {
       dispatch({
         type: TYPES.CLASSE_SAVE,
-        payload: res.docs
+        payload: res
       })
-      return cb(null, res)
+      return res
     })
     .catch(err => {
       dispatch({
         type: TYPES.CLASSE_SAVE_ERROR
       })
-      return cb(err)
-    });
-  };
+      return err
+    })
+  );
 }
 
 export function getById(id) {
