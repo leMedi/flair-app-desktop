@@ -1,4 +1,4 @@
-import {store, find as _find, getById as _getById} from '../database'
+import {store, find as _find, getById as _getById, remove as _remove} from '../database'
 
 
 export const save = (doc) => (
@@ -23,3 +23,5 @@ export const find = (criteria = {}) => (
     },
   })
 )
+
+export const remove = _remove;
