@@ -1,6 +1,5 @@
-import React from 'react';
-import { Switch, Route } from 'react-router-dom';
-
+import routerMaker from '../utils/Router'
+import { getAuthority } from '../utils/Auth'
 
 import ClasseList from '../containers/classe/ClasseList';
 import Classe from '../containers/classe/Classe';
@@ -13,80 +12,70 @@ import Seance from '../containers/seance/Seance';
 
 import HomeTemp from '../containers/HomeTemp'
 
-
-
+const auth = {
+  isAuthenticated: ()=>(getAuthority() !== null),
+  loginPage: '/user/login'
+} 
 
 const routes = [
   {
-    path: '/dash',
+    path: '/dashbaord',
     icon: "user",
     name: "DashBoard",
-    component: HomeTemp
+    component: HomeTemp,
   },
 
   {
     path: '/profs',
     icon: "user",
     name: "Professeur",
-    component: IndexProf
+    component: IndexProf,
+    auth,
   },
 
   // Classes router
   {
     path: '/classes/:id',
-    // icon: "user",
-    // name: "Etudiant",
-    component: Classe
+    component: Classe,
+    auth,
   },
   {
     path: '/classes',
     icon: "profile",
     name: "Classes",
-    component: ClasseList
+    component: ClasseList,
+    auth,
   },
 
   {
     path: '/modules/:id',
-    component: Module
+    component: Module,
+    auth,
   },
-  //Module Router
+
+  // Module Router
   {
     path: '/modules',
     icon: "profile",
     name: "Modules",
-    component: IndexModule
+    component: IndexModule,
+    auth,
   },
 
   {
     path: '/seances/:id',
-    component: Seance
+    component: Seance,
+    auth,
   },
 
-  
+
+  // default route
+  {
+    path: '/',
+    component: HomeTemp,
+  },
 ];
 
 
-
-
-
-
-export class Router extends React.Component {
-  render() {
-    return (
-      <Switch>
-        {
-          routes.map(section => (
-            <Route
-                exact
-                key={section.path}
-                path={section.path}
-                component={section.component}
-              />
-          ))
-        }
-      </Switch>
-    );
-  }
-}
-
+export const Router = routerMaker(routes);
 export default routes;
