@@ -1,19 +1,14 @@
 import {store, find as _find, getById as _getById, remove as _remove} from '../database'
 
 
-export const save = (doc) => {
-  return store({
+export const save = (doc) => (
+  store({
     ...doc,
     type: 'module'
   })
-}
+)
 
-export const getById = (id) => {
-  id = id ? id : '';
-  return _getById(id);
-  // .then (res => cb(null, res))
-  // .catch(err => cb(err))
-}
+export const getById = id => _getById(id)
 
 export const find = (criteria = {}) => (
   _find({

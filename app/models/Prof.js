@@ -8,12 +8,7 @@ export const save = (doc) => (
   })
 )
 
-export const getById = (id) => {
-  id = id ? id : '';
-  return _getById(id);
-  // .then (res => cb(null, res))
-  // .catch(err => cb(err))
-}
+export const getById = id => _getById(id)
 
 export const find = (criteria = {}) => (
   _find({
