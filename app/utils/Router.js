@@ -1,29 +1,17 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { Switch, Route, Redirect } from 'react-router-dom';
 
 
-const PrivateRoute = ({ component, auth, ...rest }) => (
+const PrivateRoute = ({ component: Component, auth, ...rest }) => (
   <Route {...rest} render={(props) => (
     auth.isAuthenticated() === true
-      ? <component {...props} />
+      ? <Component {...props} />
       : <Redirect to={{
           pathname: auth.loginPage,
           state: { from: props.location }
         }} />
   )} />
 )
-
-PrivateRoute.propTypes = {
-  component: Component,
-  auth: Object
-}
-
-PrivateRoute.defaultProps = {
-  component: (<h3>Component Not Found</h3>),
-  auth: {
-    isAuthenticated: () => false
-  }
-}
 
 
 export default function routerMaker(routes) {
@@ -55,13 +43,5 @@ export default function routerMaker(routes) {
     </Switch>
   );
 }
-routerMaker.propTypes = {
-  routes: Array,
-}
-
-routerMaker.defaultProps = {
-  routes: [],
-}
-
 
 
