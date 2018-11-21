@@ -60,6 +60,15 @@ app.on('ready', async () => {
     await installExtensions();
   }
 
+  // // 
+  // createDefaultAdmin()
+  //   .then(a => console.log('[+] createDefaultAdmin', a))
+  //   .catch(err => console.error('[!] createDefaultAdmin Error:', err))
+
+  // loadLoggedInToLocalStorage()
+  //   .then(r => console.log('[+] loadLoggedInToLocalStorage', r))
+  //   .catch(err => console.error('[!] loadLoggedInToLocalStorage Error:', err))
+
   mainWindow = new BrowserWindow({
     show: false,
     width: 1024,
