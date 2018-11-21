@@ -3,7 +3,7 @@ import { combineReducers } from 'redux';
 import { connectRouter } from 'connected-react-router';
 import counter from './counter';
 import theme from './theming';
-import user from './user';
+import session from './session';
 import prof from './prof';
 import etudiant from './etudiant';
 import classe from './classe';
@@ -18,7 +18,7 @@ export default function createRootReducer(history: {}) {
       router: routerReducer,
       counter,
       theme,
-      user,
+      session,
       prof,
       etudiant,
       classe,
