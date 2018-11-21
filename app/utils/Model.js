@@ -3,11 +3,14 @@ import db from '../database'
 
 const ModelMaker = (type, _schema) => {
   
-  const schema = _schema.keys({
-    type: _Joi.string().required(),
-    _id: Joi.string(),
-    _rev: Joi.string(),
-  })
+  let schema = null;
+  
+  if (_schema)
+    schema =_schema.keys({
+      type: _Joi.string().required(),
+      _id: Joi.string(),
+      _rev: Joi.string(),
+    })
 
   return class Model {
     constructor(doc) {
@@ -63,7 +66,7 @@ const ModelMaker = (type, _schema) => {
     }
 
     static async _validate(doc) {
-      return _Joi.validate(doc, schema)
+      return schema ? _Joi.validate(doc, schema) : null
     }
 
     static async _store(doc) {
@@ -117,8 +120,12 @@ const ModelMaker = (type, _schema) => {
     }
 
     // get by id
-    static getOne(id) {
-      const _doc = db.get(id)
+    static _getOne(id) {
+      return db.get(id)
+    }
+
+    static async getOne(id) {
+      const _doc = Model._getOne(id)
       return new Model(_doc);
     }
 
