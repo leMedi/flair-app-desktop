@@ -10,7 +10,10 @@
     "node": true
   },
   "rules": {
+    
+    "react/prop-types": 0,
     "no-underscore-dangle": "off",
+
     "arrow-parens": ["off"],
     "compat/compat": "error",
     "consistent-return": "off",
