@@ -1,5 +1,5 @@
 import routerMaker from '../utils/Router'
-import { getAuthority } from '../utils/Auth'
+import Session from '../utils/Session'
 
 import ClasseList from '../containers/classe/ClasseList';
 import Classe from '../containers/classe/Classe';
@@ -13,9 +13,11 @@ import Seance from '../containers/seance/Seance';
 import HomeTemp from '../containers/HomeTemp'
 
 const auth = {
-  isAuthenticated: ()=>(getAuthority() !== null),
+  isAuthenticated: ()=>(Session.get(Session.keys.AUTH) !== null),
   loginPage: '/user/login'
 } 
+
+// auth = null
 
 const routes = [
   {
