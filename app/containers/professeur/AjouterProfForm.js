@@ -58,6 +58,7 @@ class AjouterProfForm extends React.Component {
     const lastNameError = isFieldTouched('lastName') && getFieldError('lastName');
     const emailError = isFieldTouched('email') && getFieldError('email');
     const phoneError = isFieldTouched('phone') && getFieldError('phone');
+    const password = isFieldTouched('password') && getFieldError('phone');
 
     return (
       <div>
@@ -119,6 +120,21 @@ class AjouterProfForm extends React.Component {
                     ],
                   })(
                     <Input placeholder="please enter email" onChange={this.handleChange} />
+                  )}
+                </Form.Item>
+              </Col>
+              <Col span={12}>
+                <Form.Item
+                  label="Mot de Pass"
+                  validateStatus={password ? 'error' : ''}
+                  help={password || ''}  
+                >
+                  {getFieldDecorator('password', {
+                    rules: [
+                      { required: true, message: 'Please provide a Password!' },
+                    ],
+                  })(
+                    <Input type="password" onChange={this.handleChange} />
                   )}
                 </Form.Item>
               </Col>

@@ -29,16 +29,18 @@ class LoginPage extends Component {
       form: { validateFields }
     } = this.props
     
-    const { autoLogin } = this.state
-
     validateFields((err, values) => {
       if (!err) {
-        profLogin(values.email, values.password)
-          .then((prof) => {
-            history.push('/')
-            return prof
-          })
-          .catch(() => null)
+        profLogin(values.email, values.password, (prof) => {
+          console.log('login success', prof)
+          history.push('/')
+        })
+          // .then((prof) => {
+          //   console.log('login success', prof)
+          //   history.push('/')
+          //   return prof
+          // })
+          // .catch((error) => console.log('login error', error))
       }
     });
   }

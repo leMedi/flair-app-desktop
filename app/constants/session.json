@@ -1,3 +1,5 @@
 {
-  "AUTH": "flair-auth"
+  "AUTH": {
+    "_id": null
+  }
 }

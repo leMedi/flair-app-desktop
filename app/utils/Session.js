@@ -1,10 +1,10 @@
-import keys from '../constants/session';
+import sessionConfig from '../constants/session';
 
 
 const session = {
-  keys,
+  keys: {},
 
-  get(key) {
+  getFromLocalStorage(key) {
     if(!key) return null;
     try {
       return JSON.parse(localStorage.getItem(key));
@@ -13,10 +13,33 @@ const session = {
     }
   },
 
-  set(key, obj) {
+  setToLocalStorage(key, obj) {
     if(!key) return null;
     return localStorage.setItem(key, JSON.stringify(obj));
+  },
+
+  get(key) {
+
+    const val = this.getFromLocalStorage(key)
+    
+    if(val !== null)
+      return val
+
+    if(sessionConfig[key])
+      return sessionConfig[key]
+
+    
+    return null
+  },
+
+  set(key, obj) {
+    if(!key) return null;
+    this.setToLocalStorage(key, obj)
   }
+
+
 }
+
+Object.keys(sessionConfig).forEach((key) => {session.keys[key] = key})
 
 export default session;

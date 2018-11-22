@@ -17,20 +17,26 @@ const initState = {
 
 export default function sessionReducer(state = initState, action) {
   switch (action.type) {
-    case TYPES.USER_GETBYID:
-      return {
-        ...state,
-        currentUser: action.payload
-      }
     case TYPES.LOGIN:
       return {
         ...state,
-        currentUser: action.payload
+        currentProf: action.payload
       }
     case TYPES.LOGIN_ERROR:
       return {
         ...state,
         loginError: action.payload
+      }
+    
+    case TYPES.UPDATE_PROF:
+      return {
+        ...state,
+        currentProf: action.payload
+      }
+    case TYPES.UPDATE_PROF_MODULES:
+      return {
+        ...state,
+        modules: action.payload
       }
     default:
       return state;

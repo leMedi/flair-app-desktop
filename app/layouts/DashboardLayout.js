@@ -7,11 +7,9 @@ import SiderMenu from '../components/SiderMenu';
 import logo from '../assets/logo.svg';
 import routes, { Router as DashboardRouter } from '../config/router.dashboard';
 import Header from '../components/Dashboard/Header';
-import HomeTemp from '../containers/HomeTemp';
-import { getModulesByProf } from '../actions/module';
 
-
-import { getById as fetchUser } from '../actions/user';
+import { updateCurrentProf } from '../actions/session';
+import { Session } from '../utils/Session';
 
 
 const { Content } = Layout;
@@ -66,9 +64,8 @@ class DashboardLayout extends Component {
       menuData: memoizeOneFormatter(routes),
     };
 
-    this.props.fetchUser('412e4b67-2ecb-4194-9210-fbb357933752', (user) => {
-      this.props.getModulesByProf(user._id)
-    });
+    
+    this.props.updateCurrentProf()
   }
 
   
@@ -105,14 +102,14 @@ class DashboardLayout extends Component {
       children,
       location,
       location: { pathname },
-      currentUserModules,
+      currentProf,
+      currentProfModules,
     } = this.props;
 
     const { isMobile, menuData, collapsed } = this.state;
     const isTop = PropsLayout === 'topmenu';
     
-    const currentUser = this.props.currentUser;
-    console.log('currentUser' ,currentUser);
+    console.log('currentUser', currentProf);
 
     return(
       <Layout>
@@ -123,7 +120,7 @@ class DashboardLayout extends Component {
             onCollapse={this.handleMenuCollapse}
             collapsed={collapsed}
             menuData={menuData}
-            menuModulesData={currentUserModules}
+            menuModulesData={currentProfModules}
             theme={navTheme}
             isMobile={isMobile}
             location={location}
@@ -155,8 +152,8 @@ class DashboardLayout extends Component {
 function mapStateToProps(state) {
   return {
     ...state.theme,
-    currentUser: state.user.currentUser,
-    currentUserModules: state.user.modules,
+    currentProf: state.session.currentProf,
+    currentProfModules: state.session.modules,
     modules: state.module.list
     
   };
@@ -164,5 +161,5 @@ function mapStateToProps(state) {
 
 export default connect(
   mapStateToProps,
-  {fetchUser, getModulesByProf}
+  { updateCurrentProf }
 )(DashboardLayout);

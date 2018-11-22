@@ -161,7 +161,7 @@ export class GlobalHeaderRight extends PureComponent {
 
 function mapStateToProps(state) {
   return {
-    currentUser: state.currentUser,
+    currentUser: state.session.currentProf,
     theme: state.theme.navTheme
   };
 }

@@ -125,7 +125,7 @@ const ModelMaker = (type, _schema) => {
     }
 
     static async getOne(id) {
-      const _doc = Model._getOne(id)
+      const _doc = await Model._getOne(id)
       return new Model(_doc);
     }
 

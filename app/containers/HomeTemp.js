@@ -10,26 +10,20 @@ function filterModule(modules, profId) {
 
 class HomeTemp extends Component {
 
-  constructor(props){
-    super(props);
-  }
-
   render() {
 
-    const currentUser = this.props.currentUser;
-    console.log('currentUser' ,currentUser);
+    // const {currentUser} = this.props;
     let userModules = [];
 
-    if(currentUser != null){
-      userModules = this.props.modules || [];
-      console.log('UserModules' ,userModules);
-    }
+    // if(currentUser != null){
+    //   console.log('UserModules' ,userModules);
+    // }
 
     return (
       <div>
           <h1>Hello World</h1>
            <ul>
-            {userModules.map((module) => (<li  key={module._id}>{module.name}</li>))}
+            {userModules.map((module) => (<li key={module._id}>{module.name}</li>))}
           </ul>
       </div>
     );
@@ -38,8 +32,8 @@ class HomeTemp extends Component {
 
 function mapStateToProps(state) {
   return {
-    currentUser: state.user.currentUser,
-    modules: state.module.modulesProf
+    // currentUser: state.session.currentProf,
+    // modules: state.module.modulesProf
   };
 }
 

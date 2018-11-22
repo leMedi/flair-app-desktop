@@ -13,7 +13,7 @@ import Seance from '../containers/seance/Seance';
 import HomeTemp from '../containers/HomeTemp'
 
 const auth = {
-  isAuthenticated: ()=>(Session.get(Session.keys.AUTH) !== null),
+  isAuthenticated: ()=>((Session.get(Session.keys.AUTH)._id) ? true : false),
   loginPage: '/user/login'
 } 
 
