@@ -64,7 +64,7 @@ class Module extends React.Component {
           </Card>
         }
 
-        <Card title="Seances"  bordered={false}>
+        <Card title="Seances" bordered={false}>
         <AjoutSeanceForm />
         <Table 
               columns={columns}
@@ -88,7 +88,7 @@ class Module extends React.Component {
 
 const mapStateToProps = state => ({
   module: state.module.currentModule,
-  profModule: state.prof.profCurrent,
+  profModule: state.session.currentProf,
   seances: state.seance.list
 });
 
