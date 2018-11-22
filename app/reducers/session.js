@@ -37,7 +37,7 @@ export default function sessionReducer(state = initState, action) {
       return {
         ...state,
         modules: action.payload.map(
-          module => Object.assign(module, { icon: 'user', path: `/module/${module._id}` })
+          module => Object.assign(module, { icon: 'user', path: `/modules/${module._id}` })
         )
       }
     default:
