@@ -36,7 +36,9 @@ export default function sessionReducer(state = initState, action) {
     case TYPES.UPDATE_PROF_MODULES:
       return {
         ...state,
-        modules: action.payload
+        modules: action.payload.map(
+          module => Object.assign(module, { icon: 'user', path: `/module/${module._id}` })
+        )
       }
     default:
       return state;
