@@ -108,10 +108,13 @@ class AjoutClassForm extends React.Component<Props> {
               console.log('clas save', _class)
               const etudiants = this.xlsJsonData.map(e => {
                 const name = e[classe.nomColName].split(' ');
+                console.log('e', e)
                 return { 
                   firstName: name.shift(),
                   lastName: name.join(' '),
                   email: 'no@email.com',
+                  cne: e[classe.cneColName],
+                  dateNaissance: e[classe.dateColName],
                 }
               })
               return bulkSave(etudiants, _class.id)

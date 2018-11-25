@@ -16,6 +16,7 @@
   "license": "MIT",
   "dependencies": {
     "pouchdb": "^7.0.0",
-    "pouchdb-find": "^7.0.0"
+    "pouchdb-find": "^7.0.0",
+    "socket.io": "^2.1.1"
   }
 }

@@ -1,4 +1,4 @@
-import { find as _find, save as _save, getById as _getById} from '../models/Seance'
+import Seance, { find as _find, save as _save, getById as _getById} from '../models/Seance'
 
 
 export const TYPES = {
@@ -10,7 +10,6 @@ export const TYPES = {
 
   SEANCE_GETBYID: 'SEANCE_GETBYID',
   SEANCE_GETBYID_ERROR: 'SEANCE_GETBYID_ERROR',
-
 }
 
 export function find(criteria) {
@@ -64,6 +63,7 @@ export function getById(id) {
         type: TYPES.SEANCE_GETBYID,
         payload: res
       })
+      return res
     })
     .catch(err => {
       console.log(err)

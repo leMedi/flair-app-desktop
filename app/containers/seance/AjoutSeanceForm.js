@@ -1,40 +1,67 @@
 import React, { Component } from 'react';
 import { connect } from "react-redux";
  
-import { Drawer, Form, Button, Col, Row, Input, Select, DatePicker, Upload, Icon, TimePicker } from 'antd';
+import {
+  Drawer,
+  Form,
+  Button,
+  Col,
+  Row,
+  Input,
+  DatePicker,
+  message
+} from 'antd';
+
+import DynamicFieldSet from '../../components/DynamicFieldSet';
+// import TaskList from '../../components/TaskList';
 
 import { find, save } from '../../actions/seance';
+import Seance from '../../models/Seance'
 
-const { Option } = Select;
 const { RangePicker } = DatePicker;
 const { TextArea } = Input;
 
-function hasErrors(fieldsError) {
-  return Object.keys(fieldsError).some(field => fieldsError[field]);
-}
 
-class AjoutSeanceForm extends React.Component {
-  state = { visible: false };
+class AjoutSeanceForm extends Component {
+  state = {
+    visible: false,
+  };
 
   handleSubmit = (event) => {
-
     event.preventDefault();
-    this.props.form.validateFields((err, seance) => {
-      if (!err)
-        this.props.save({
-          ...seance,
-          semaineDebut: seance.semaine[0].format('YYYY-MM-DD'),
-          semaineFin: seance.semaine[1].format('YYYY-MM-DD'),
-          semaine: null
-        },  (err2, result) => {
-          if (!err2) {
-            console.log(result)
-            // @TODO: clear form
-            this.props.find();
+
+    const {
+      module: { _id: module_id },
+      find,
+      form: { validateFields }
+    } = this.props;
+
+    validateFields((err, {name, description, semaine, taches, devoirs}) => {
+      if (!err) {
+        const seance = new Seance({
+          module_id,
+          
+          name,
+          description,
+          
+          dateDebut: semaine[0].format('YYYY-MM-DD'),
+          dateFin: semaine[1].format('YYYY-MM-DD'),
+
+          tasks: taches,
+          assignments: devoirs,
+        })
+
+        seance.save()
+          .then(() => {
+            console.log('seance save', seance.toObject())
             this.setState({visible: false})
-            console.log('Successfully added a Seance!');
-          }
-        });
+            return find({ module_id }) // update Module Seances list
+          })
+          .catch(saveError => console.error('Seance Save Error', saveError))
+
+      }else{
+        message.error('Seance Save ValidationError', err.message)
+      }
     });
 
   }
@@ -55,7 +82,7 @@ class AjoutSeanceForm extends React.Component {
     const { getFieldDecorator, getFieldsError, getFieldError, isFieldTouched } = this.props.form;
     
     const nameError = isFieldTouched('name') && getFieldError('name');
-    const leçonError = isFieldTouched('leçon') && getFieldError('leçon');
+    // const leçonError = isFieldTouched('leçon') && getFieldError('leçon');
     const devoirError = isFieldTouched('devoir') && getFieldError('devoir');
     const semaineError = isFieldTouched('semaine') && getFieldError('semaine');
     const descriptionError = isFieldTouched('description') && getFieldError('description');
@@ -80,6 +107,7 @@ class AjoutSeanceForm extends React.Component {
           }}
         >
           <Form layout="vertical" hideRequiredMark  onSubmit={this.handleSubmit}>
+              
               <Row gutter={16}>
                 <Col span={12}>
                   <Form.Item 
@@ -93,44 +121,18 @@ class AjoutSeanceForm extends React.Component {
                   </Form.Item>
                 </Col>
                 <Col span={12}>
-                <Form.Item 
-                  label="Leçon"
-                  validateStatus={leçonError ? 'error' : ''}
-                  help={leçonError || ''}
-                >
-                    {getFieldDecorator('leçon', {
-                      rules: [{ required: true, message: 'please enter leçon' }],
-                    })(<Input placeholder="please enter leçon" />)}
-                  </Form.Item>
-                </Col>
-              </Row>
-              <Row gutter={16}>
-                    
-                
-                <Col span={12}>
                   <Form.Item 
-                    label="Devoir"
-                    validateStatus={devoirError ? 'error' : ''}
-                    help={devoirError || ''}
-                  >
-                    {getFieldDecorator('Devoir', {
-                      rules: [{ required: true, message: 'please enter Devoir' }],
-                    })(<Input placeholder="Devoir" />)}
+                      label="Semaine"
+                      validateStatus={semaineError ? 'error' : ''}
+                      help={semaineError || ''}
+                    >
+                      {getFieldDecorator('semaine', {
+                        rules: [{ required: true, message: 'please select Week' }],
+                      })(<RangePicker />)}
                   </Form.Item>
                 </Col>
-                <Col span={12}>
-                <Form.Item 
-                    label="Semaine"
-                    validateStatus={semaineError ? 'error' : ''}
-                    help={semaineError || ''}
-                  >
-                    {getFieldDecorator('semaine', {
-                      rules: [{ required: true, message: 'please select Week' }],
-                    })(<RangePicker />)}
-                </Form.Item>
-                </Col>
               </Row>
-              
+
               <Row gutter={16}>
                 <Col span={24}>
                   <Form.Item 
@@ -144,6 +146,10 @@ class AjoutSeanceForm extends React.Component {
                   </Form.Item>
                 </Col>
               </Row>
+
+              <DynamicFieldSet listName='taches' form={this.props.form}/>
+              <DynamicFieldSet listName='devoirs' form={this.props.form}/>
+                
 
               <div
                 style={{
@@ -170,7 +176,6 @@ class AjoutSeanceForm extends React.Component {
                   htmlType="submit"
                   type="primary"
                   onClick={this.handleSubmit}
-                  disabled={hasErrors(getFieldsError())}
                 >
                   Ajouter
                 </Button>
@@ -185,8 +190,11 @@ class AjoutSeanceForm extends React.Component {
 
 const RegisterForm = Form.create()(AjoutSeanceForm);
 
+const mapStateToProps = state => ({
+  module: state.module.currentModule,
+});
 
 export default connect(
-  null,
+  mapStateToProps,
   { find, save }
 )(RegisterForm);

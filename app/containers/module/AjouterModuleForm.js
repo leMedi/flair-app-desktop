@@ -67,14 +67,14 @@ class AjouterModuleForm extends React.Component {
     const classes = this.props.classes;
     const classeList = classes.map((classe) =>
       <Option key={classe._id}>
-        {classe.filiere}
+        {classe.filiere} {classe.annee} ({classe.name})
       </Option>
     );
 
     const profs = this.props.profs;
     const profList = profs.map((prof) =>
       <Option key={prof._id}>
-        {prof.lastName}
+        {prof.lastName} {prof.firstName}
       </Option>
     );
     return (

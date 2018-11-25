@@ -1,86 +1,128 @@
 import React from 'react';
 import { connect } from "react-redux";
-import { Layout, Card, Row, Table, Divider } from 'antd';
+import { Button, Card, Table, Divider, Tag } from 'antd';
 
 
 import { getById as getModuleById } from '../../actions/module';
 import { find as findAllSeance } from '../../actions/seance';
 import AjoutSeanceForm  from '../seance/AjoutSeanceForm';
 
-const columns = [{
-  title: 'Name',
-  dataIndex: 'name',
-  key: 'name',
-}, 
-{
-  title: 'Leçon',
-  dataIndex: 'leçon',
-  key: 'leçon',
-},  
-{
-  title: 'Devoir',
-  dataIndex: 'Devoir',
-  key: 'Devoir',
-},
-{
-  title: 'Action',
-  key: 'action',
-  render: (text, record) => (
-    <span>
-      <a href="javascript:;">Edit </a>
-      <Divider type="vertical" />
-      <a href="javascript:;">Delete</a>
-    </span>
-  ),
-}];
+import Seance from '../../models/Seance'
+
+
+const columns = [
+  {
+    title: 'Name',
+    dataIndex: 'name',
+    key: 'name',
+  },
+  {
+    title: 'Semaine',
+    key: 'semaine',
+    render: (text, record) => (
+      <React.Fragment>
+        <Tag color="blue">{record.dateDebut}</Tag> - <Tag color="purple">{record.dateFin}</Tag>
+      </React.Fragment>
+    )
+  },
+  {
+    title: 'Taches',
+    dataIndex: 'taches',
+    key: 'taches',
+    render: (list, record) =>(
+      record.tasks.length
+    )
+  },  
+  {
+    title: 'Devoirs',
+    dataIndex: 'devoirs',
+    key: 'devoirs',
+    render: (list, record) =>(
+      record.assignments.length
+    )
+  },
+  {
+    title: 'Action',
+    key: 'action',
+    render: (text, record) => (
+      <span>
+        <a href="javascript:;">Edit </a>
+        <Divider type="vertical" />
+        <a href="javascript:;">Delete</a>
+      </span>
+    ),
+  }
+];
 
 
 class Module extends React.Component {
 
-  constructor(props) {
-    super(props);
-  }
+  
 
   componentDidMount() {
-    const moduleId = this.props.match.params.id;
-    this.props.getModuleById(moduleId);
-    this.props.findAllSeance();
+    // 
+    // console.log("componentDidMount", moduleId)
+    // this.props.getModuleById(moduleId);
+    // this.props.findAllSeance();
+  }
 
-}
+  componentDidUpdate(prevProps) {
+    const moduleId = this.props.match.params.id;
+    if (moduleId !== prevProps.match.params.id) {
+      this.props.getModuleById(moduleId);
+      this.props.findAllSeance({
+        module_id: moduleId
+      });
+    }
+  }
 
   render() {
 
-    const module = this.props.module;
-    const professeur = this.props.profModule;
-    const seances = this.props.seances;
+    const {
+      module,
+      professeur,
+      seances,
+      history
+    } = this.props;
 
     return (
       <div>
         { module && 
           <Card title={module.name}>
-          
-          <h3>Professeur : {professeur.firstName} </h3>
-
+            <h3>Professeur : { professeur ? professeur.firstName : ''} </h3>
           </Card>
         }
 
         <Card title="Seances" bordered={false}>
-        <AjoutSeanceForm />
-        <Table 
-              columns={columns}
-              dataSource={seances}
-              rowKey="_id"
-              onRow={(seance) => {
-                return {
-                  onClick: () => { // click row
-                    this.props.history.push({
-                      pathname: '/seances/' + seance._id,
-                    })
-                  } 
-                };
-              }}
-            />
-            </Card>
+          <AjoutSeanceForm /> 
+          
+          <Table 
+            columns={columns}
+            dataSource={seances}
+            rowKey="_id"
+            onRow={(seance) => (
+              {
+                onClick: () => { // click row
+                  history.push({
+                    pathname: `/seances/${seance._id}`,
+                  })
+                } 
+              }
+            )}
+          />
+            
+          <Button
+            type="danger"
+            onClick={(e)=>{
+              e.preventDefault()
+              // delete all seances
+              Seance.bulkDelete(seances)
+            }}
+          >
+            Supprimer toutes les Seances
+          </Button>
+          
+        </Card>
       </div>
     )
   }
@@ -88,7 +130,7 @@ class Module extends React.Component {
 
 const mapStateToProps = state => ({
   module: state.module.currentModule,
-  profModule: state.session.currentProf,
+  professeur: state.session.currentProf,
   seances: state.seance.list
 });
 
