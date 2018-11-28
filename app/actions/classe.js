@@ -1,75 +1,106 @@
-import { find as _find, save as _save, getById as _getById } from '../models/Classe'
-
+import Classe from '../models/Classe'
 
 export const TYPES = {
-  CLASSE_FIND: 'CLASSE_FIND',
-  CLASSE_FIND_ERROR: 'CLASSE_FIND_ERROR',
+  CLASSE_FIND: '@CLASSE/FIND',
+  CLASSE_GET: '@CLASSE/GET_BY_ID',
+  CLASSE_SAVE: '@CLASSE/SAVE',
+  CLASSE_DELETE: '@CLASSE/DELETE',
 
-  CLASSE_SAVE: 'CLASSE_SAVE',
-  CLASSE_SAVE_ERROR: 'CLASSE_SAVE_ERROR',
+  CLASSE_FIND_SUCCESS: '@CLASSE/FIND_SUCCESS',
+  CLASSE_GET_SUCCESS: '@CLASSE/GET_BY_ID_SUCCESS',
+  CLASSE_SAVE_SUCCESS: '@CLASSE/SAVE_SUCCESS',
+  CLASSE_DELETE_SUCCESS: '@CLASSE/DELETE_SUCCESS',
 
-  CLASSE_GETBYID: 'CLASSE_GETBYID',
-  CLASSE_GETBYID_ERROR: 'CLASSE_GETBYID_ERROR',
-
+  CLASSE_ERROR: '@CLASSE/ERROR',
 }
 
-export function find(criteria) {
+export function classeFind(criteria) {
   return (dispatch) => {
-    _find(criteria)
-    .then(res => (
+    dispatch({ type: TYPES.CLASSE_FIND })
+
+    Classe.find(criteria)
+    .then(classes => {
       dispatch({
-        type: TYPES.CLASSE_FIND,
-        payload: res.docs
+        type: TYPES.CLASSE_FIND_SUCCESS,
+        payload: classes
       })
-    ))
+      return classes
+    })
     .catch(err => {
       dispatch({
-        type: TYPES.CLASSE_FIND_ERROR
+        type: TYPES.CLASSE_ERROR,
+        payload: err.message
       })
-    });
-  };
+      throw err
+    })
+
+  }
+}
+
+export function classeGetById(id) {
+  return async (dispatch) => {
+    dispatch({ type: TYPES.CLASSE_GET })
+
+    Classe.getOne(id)
+    .then(classe => {
+      dispatch({
+        type: TYPES.CLASSE_GET_SUCCESS,
+        payload: classe.toObject()
+      })
+      return classe
+    })
+    .catch(err => {
+      dispatch({
+        type: TYPES.CLASSE_ERROR,
+        payload: err.message
+      })
+      throw err
+    })
+  }
 }
 
 
-export function save(classe) {
-  return (dispatch) => (
-    _save(classe)
-    .then(res => {
+export function classeSave(doc) {
+  return async (dispatch) => {
+    dispatch({ type: TYPES.CLASSE_SAVE })
+
+    try {
+      const classe = new Classe(doc)
+      await classe.save()
+
       dispatch({
-        type: TYPES.CLASSE_SAVE,
-        payload: res
+        type: TYPES.CLASSE_SAVE_SUCCESS,
+        payload: classe.toObject()
       })
-      return res
-    })
-    .catch(err => {
+
+      return classe
+    }catch(err){
       dispatch({
-        type: TYPES.CLASSE_SAVE_ERROR
+        type: TYPES.CLASSE_ERROR,
+        payload: err.message
       })
-      return err
-    })
-  );
+      throw err
+    }
+  }
 }
 
-export function getById(id) {
-  return (dispatch) => {
-    //clear var
-    dispatch({
-      type: TYPES.CLASSE_GETBYID,
-      payload: null
-    })
-    return _getById(id)
-    .then(res => {
-      console.log('before dispatch', res)
+export function classeDelete(id) {
+  return async (dispatch) => {
+    dispatch({ type: TYPES.CLASSE_DELETE })
+
+    Classe.delete(id)
+    .then(classe => {
       dispatch({
-        type: TYPES.CLASSE_GETBYID,
-        payload: res
+        type: TYPES.CLASSE_DELETE_SUCCESS,
       })
+      return classe
     })
     .catch(err => {
-      console.log(err)
       dispatch({
-        type: TYPES.CLASSE_GETBYID_ERROR
+        type: TYPES.CLASSE_ERROR,
+        payload: err.message
       })
-    });
-  };
+      throw err
+    })
+  }
 }

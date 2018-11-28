@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Layout, Icon } from 'antd';
+import { Layout } from 'antd';
 import isEqual from 'lodash/isEqual';
 import memoizeOne from 'memoize-one';
 import { connect } from 'react-redux';
@@ -9,7 +9,6 @@ import routes, { Router as DashboardRouter } from '../config/router.dashboard';
 import Header from '../components/Dashboard/Header';
 
 import { updateCurrentProf } from '../actions/session';
-import { Session } from '../utils/Session';
 
 
 const { Content } = Layout;
@@ -155,7 +154,6 @@ function mapStateToProps(state) {
     currentProf: state.session.currentProf,
     currentProfModules: state.session.modules,
     modules: state.module.list
-    
   };
 }
 

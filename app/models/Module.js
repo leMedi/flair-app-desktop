@@ -1,4 +1,3 @@
-import {store, find as _find, getById as _getById, remove as _remove} from '../database'
 import Model, { Joi } from '../utils/Model'
 
 const Module = Model("module", Joi.object().keys({
@@ -8,40 +7,11 @@ const Module = Model("module", Joi.object().keys({
   hrsTD: Joi.number().integer().min(0).max(300).required(),
   hrsTP: Joi.number().integer().min(0).max(300).required(),
  
-  professeur: Joi.string(),
-  classe: Joi.string(),
+  profId: Joi.string(),
+  classeId: Joi.string(),
 
 }));
 
-Module.findByProf = async (profId) => {
-  console.log('modules find by prof id', profId)
-  
-  if(!profId)
-    return []
-  
-  return Module.find({
-    professeur: profId
-  })
-}
+Module.findByProf = async profId => Module.find({ profId })
 
 export default Module;
-
-export const save = (doc) => (
-  store({
-    ...doc,
-    type: 'module'
-  })
-)
-
-export const getById = id => _getById(id)
-
-export const find = (criteria = {}) => (
-  _find({
-    selector: {
-      ...criteria,
-      type: 'module'
-    },
-  })
-)
-
-export const remove = _remove;

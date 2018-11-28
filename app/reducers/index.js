@@ -1,7 +1,6 @@
 // @flow
 import { combineReducers } from 'redux';
 import { connectRouter } from 'connected-react-router';
-import counter from './counter';
 import theme from './theming';
 import session from './session';
 import prof from './prof';
@@ -16,7 +15,6 @@ export default function createRootReducer(history: {}) {
   return connectRouter(history)(
     combineReducers({
       router: routerReducer,
-      counter,
       theme,
       session,
       prof,

@@ -1,75 +1,84 @@
-import { find as _find, save as _save, getById as _getById  } from '../models/Prof'
+import Prof from '../models/Prof'
 
 
 export const TYPES = {
-  PROF_FIND: 'PROF_FIND',
-  PROF_FIND_ERROR: 'PROF_FIND_ERROR',
+  PROF_FIND: '@PROF/FIND',
+  PROF_GET: '@PROF/GET_BY_ID',
+  PROF_SAVE: '@PROF/SAVE',
 
-  PROF_SAVE: 'PROF_SAVE',
-  PROF_SAVE_ERROR: 'PROF_SAVE_ERROR',
+  PROF_FIND_SUCCESS: '@PROF/FIND_SUCCESS',
+  PROF_GET_SUCCESS: '@PROF/GET_BY_ID_SUCCESS',
+  PROF_SAVE_SUCCESS: '@PROF/SAVE_SUCCESS',
 
-  PROF_GETBYID: 'PROF_GETBYID',
-  PROF_GETBYID_ERROR: 'PROF_GETBYID_ERROR',
-
+  PROF_ERROR: '@PROF/ERROR',
 }
 
-export function find(criteria) {
+export function profFind(criteria) {
   return (dispatch) => {
-    _find(criteria)
-    .then(res => (
-      dispatch({
-        type: TYPES.PROF_FIND,
-        payload: res.docs
-      })
-    ))
-    .catch(err => {
-      dispatch({
-        type: TYPES.PROF_FIND_ERROR
-      })
-    });
-  };
-}
+    dispatch({ type: TYPES.PROF_FIND })
 
-
-export function save(prof, cb) {
-  return (dispatch) => {
-    _save(prof)
-    .then(res => {
+    Prof.find(criteria)
+    .then(profs => {
       dispatch({
-        type: TYPES.PROF_SAVE,
-        payload: res.docs
+        type: TYPES.PROF_FIND_SUCCESS,
+        payload: profs
       })
-      return cb(null, res)
+      return profs
     })
     .catch(err => {
       dispatch({
-        type: TYPES.PROF_SAVE_ERROR
+        type: TYPES.PROF_ERROR,
+        payload: err.message
       })
-      return cb(err)
-    });
-  };
+      throw err
+    })
+
+  }
 }
 
-export function getById(id) {
-  return (dispatch) => {
-    //clear var
-    dispatch({
-      type: TYPES.PROF_GETBYID,
-      payload: null
-    })
-    return _getById(id)
-    .then(res => {
-      console.log('before dispatch', res)
+export function profGetById(id) {
+  return async (dispatch) => {
+    dispatch({ type: TYPES.PROF_GET })
+
+    Prof.getOne(id)
+    .then(prof => {
       dispatch({
-        type: TYPES.PROF_GETBYID,
-        payload: res
+        type: TYPES.PROF_GET_SUCCESS,
+        payload: prof.toObject()
       })
+      return prof
     })
     .catch(err => {
-      console.log(err)
       dispatch({
-        type: TYPES.PROF_GETBYID_ERROR
+        type: TYPES.PROF_ERROR,
+        payload: err.message
       })
-    });
-  };
+      throw err
+    })
+  }
+}
+
+
+export function profSave(doc) {
+  return async (dispatch) => {
+    dispatch({ type: TYPES.PROF_SAVE })
+
+    try {
+      const prof = new Prof(doc)
+      await prof.save()
+
+      dispatch({
+        type: TYPES.PROF_SAVE_SUCCESS,
+        payload: prof.toObject()
+      })
+
+      return prof
+    }catch(err){
+      dispatch({
+        type: TYPES.PROF_ERROR,
+        payload: err.message
+      })
+      throw err
+    }
+  }
 }

@@ -1,104 +1,111 @@
-import { find as _find, save as _save, getById as _getById} from '../models/Module'
+import Module from '../models/Module'
 
 
 export const TYPES = {
-  MODULE_FIND: 'MODULE_FIND',
-  MODULE_FIND_ERROR: 'MODULE_FIND_ERROR',
+  MODULE_FIND: '@MODULE/FIND',
+  MODULE_GET: '@MODULE/GET_BY_ID',
+  MODULE_SAVE: '@MODULE/SAVE',
+  
+  PROF_MODULES: '@MODULE/PROF_MODULES',
 
-  MODULE_SAVE: 'MODULE_SAVE',
-  MODULE_SAVE_ERROR: 'MODULE_SAVE_ERROR',
+  MODULE_FIND_SUCCESS: '@MODULE/FIND_SUCCESS',
+  MODULE_GET_SUCCESS: '@MODULE/GET_BY_ID_SUCCESS',
+  MODULE_SAVE_SUCCESS: '@MODULE/SAVE_SUCCESS',
+  
+  PROF_MODULES_SUCCESS: '@MODULE/PROF_MODULES_SUCCESS',
 
-  MODULE_GETPROFBYID: 'MODULE_GETPROFBYID',
-  MODULE_GETPROFBYID_ERROR: 'MODULE_GETPROFBYID_ERROR',
-
-  MODULE_GETBYID: 'MODULE_GETBYID',
-  MODULE_GETBYID_ERROR: 'MODULE_GETBYID_ERROR',
-
+  MODULE_ERROR: '@MODULE/ERROR',
 }
 
-export function find(criteria) {
+export function moduleFind(criteria) {
   return (dispatch) => {
-    _find(criteria)
-    .then(res => (
-      dispatch({
-        type: TYPES.MODULE_FIND,
-        payload: res.docs
-      })
-    ))
-    .catch(err => {
-      dispatch({
-        type: TYPES.MODULE_FIND_ERROR
-      })
-    });
-  };
-}
+    dispatch({ type: TYPES.MODULE_FIND })
 
-
-export function save(module, cb) {
-  return (dispatch) => {
-    _save(module)
-    .then(res => {
+    Module.find(criteria)
+    .then(modules => {
       dispatch({
-        type: TYPES.MODULE_SAVE,
-        payload: res.docs
+        type: TYPES.MODULE_FIND_SUCCESS,
+        payload: modules
       })
-      return cb(null, res)
+      return modules
     })
     .catch(err => {
       dispatch({
-        type: TYPES.MODULE_SAVE_ERROR
+        type: TYPES.MODULE_ERROR,
+        payload: err.message
       })
-      return cb(err)
-    });
-  };
+      throw err
+    })
+
+  }
 }
 
-export function getModulesByProf(profid) {
-  return (dispatch) => {
-    console.log('profid', profid);
-    //clear var
-    dispatch({
-      type: TYPES.MODULE_GETPROFBYID,
-      payload: null
-    })
-    return _find({professeur: profid})
-    .then(res => {
-      console.log('before dispatch', res)
+export function moduleGetById(id) {
+  return async (dispatch) => {
+    dispatch({ type: TYPES.MODULE_GET })
+
+    Module.getOne(id)
+    .then(_module => {
       dispatch({
-        type: TYPES.MODULE_GETPROFBYID,
-        payload: res.docs
+        type: TYPES.MODULE_GET_SUCCESS,
+        payload: _module.toObject()
       })
+      return _module
     })
     .catch(err => {
-      console.log(err)
       dispatch({
-        type: TYPES.MODULE_GETPROFBYID_ERROR
+        type: TYPES.MODULE_ERROR,
+        payload: err.message
       })
-    });
-  };
+      throw err
+    })
+  }
 }
 
-export function getById(id) {
+export function ModuleFindByProf(profId) {
   return (dispatch) => {
-    //clear var
-    console.log('ModuleId', id);
-    dispatch({
-      type: TYPES.MODULE_GETBYID,
-      payload: null
-    })
-    return _getById(id)
-    .then(res => {
-      console.log('before module dispatch', res)
+    dispatch({ type: TYPES.PROF_MODULES })
+
+    Module.findByProf(profId)
+    .then(modules => {
       dispatch({
-        type: TYPES.MODULE_GETBYID,
-        payload: res
+        type: TYPES.PROF_MODULES_SUCCESS,
+        payload: modules
       })
+      return modules
     })
     .catch(err => {
-      console.log(err)
       dispatch({
-        type: TYPES.MODULE_GETBYID_ERROR
+        type: TYPES.MODULE_ERROR,
+        payload: err.message
       })
-    });
-  };
+      throw err
+    })
+
+  }
+}
+
+
+export function moduleSave(doc) {
+  return async (dispatch) => {
+    dispatch({ type: TYPES.MODULE_SAVE })
+
+    try {
+      const _module = new Module(doc)
+      await _module.save()
+
+      dispatch({
+        type: TYPES.MODULE_SAVE_SUCCESS,
+        payload: _module.toObject()
+      })
+
+      return _module
+    }catch(err){
+      dispatch({
+        type: TYPES.MODULE_ERROR,
+        payload: err.message
+      })
+      throw err
+    }
+  }
 }

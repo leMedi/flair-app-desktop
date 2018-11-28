@@ -2,22 +2,34 @@ import { TYPES } from '../actions/classe'
 
 const initState = {
   list: [],
-  classeCurrent : null,
+  current: null,
+
+  error: null
 };
 
 export default function classeReducer(state = initState, action) {
   switch (action.type) {
-    case TYPES.CLASSE_FIND:
+    case TYPES.CLASSE_FIND_SUCCESS:
       return {
         ...state,
-        list: action.payload
+        list: action.payload,
+        error: null
       }
-    case TYPES.CLASSE_GETBYID:
+    case TYPES.CLASSE_GET_SUCCESS:
       return {
         ...state,
-        classeCurrent: action.payload
+        current: action.payload,
+        error: null
+      }
+    case TYPES.CLASSE_ERROR:
+      return {
+        ...state,
+        error: action.payload,
       }
     default:
-      return state;
+      return {
+        ...state,
+        error: null
+      };
   }
 }

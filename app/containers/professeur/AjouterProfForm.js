@@ -1,9 +1,9 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { connect } from "react-redux";
 
 import { Drawer, Form, Button, Col, Row, Input } from 'antd';
 
-import { find, save } from '../../actions/prof';
+import { profFind, profSave } from '../../actions/prof';
 
 
 function hasErrors(fieldsError) {
@@ -17,24 +17,25 @@ class AjouterProfForm extends React.Component {
   };
 
   componentDidMount() {
-    // To disabled submit button at the beginning.
+    // eslint-disable-next-line react/destructuring-assignment
     this.props.form.validateFields();
   }
 
   handleSubmit = (event) => {
-
     event.preventDefault();
-    this.props.form.validateFields((err, prof) => {
-      if (!err)
-        this.props.save(prof ,  (err2, result) => {
-          if (!err2) {
-            console.log(result)
-            // @TODO: clear form
-            this.props.find();
-            this.setState({visible: false})
-            console.log('Successfully added a prof!');
-          }
-        });
+
+     const {
+       form: { validateFields },
+       AllProfs,
+       newProf,
+     } = this.props;
+
+    validateFields((validationError, prof) => {
+      if (!validationError)
+        newProf(prof)
+          .then(AllProfs)
+          .then(this.onClose)
+          .catch(err=>console.error(err))
     });
 
   }
@@ -52,7 +53,11 @@ class AjouterProfForm extends React.Component {
   };
 
   render() {
-    const { getFieldDecorator, getFieldsError, getFieldError, isFieldTouched } = this.props.form;
+    const {
+      form: { getFieldDecorator, getFieldsError, getFieldError, isFieldTouched } 
+    }= this.props;
+
+    const { visible } = this.state;
 
     const firstNameError = isFieldTouched('firstName') && getFieldError('firstName');
     const lastNameError = isFieldTouched('lastName') && getFieldError('lastName');
@@ -71,7 +76,7 @@ class AjouterProfForm extends React.Component {
           placement="right"
           onClose={this.onClose}
           maskClosable={false}
-          visible={this.state.visible}
+          visible={visible}
           style={{
             height: 'calc(100% - 55px)',
             overflow: 'auto',
@@ -192,13 +197,13 @@ class AjouterProfForm extends React.Component {
   }
 }
 
-  
-
 
 const RegisterForm = Form.create()(AjouterProfForm);
 
-
 export default connect(
   null,
-  { find, save }
+  {
+    AllProfs: profFind,
+    newProf: profSave,
+  }
 )(RegisterForm);

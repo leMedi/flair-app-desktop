@@ -1,30 +1,15 @@
-import {store, find as _find, getById, bulkStore} from '../database'
+import Model, { Joi } from '../utils/Model'
 
-const DOC_TYPE = 'etudiant' 
+const Etudiant = Model('etudiant', Joi.object().keys({
+  cne: Joi.string().min(3).max(30).required(),
+  classeId: Joi.string().min(3).max(30).required(),
 
-export const save = (doc) => (
-  store({
-    ...doc,
-    type: DOC_TYPE
-  })
-)
+  nom: Joi.string().min(3).max(30).required(),
+  prenom: Joi.string().min(3).max(30).required(),
+  
+  password: Joi.string().min(3).max(30),
+}));
 
-export const bulkSave = (docs, classId, options = {}) => {
-  const typedDocs = docs.map(doc => Object.assign(doc, {type: DOC_TYPE, classe: classId}))
-  return bulkStore(typedDocs, options)
-}
+Etudiant.getByClassId = classeId => Etudiant.find({ classeId })
 
-export const get = (id, cb) => (
-  getById(id)
-  .then (res => cb(null, res))
-  .catch(err => cb(err))
-)
-
-export const find = (criteria = {}) => (
-  _find({
-    selector: {
-      ...criteria,
-      type: DOC_TYPE
-    },
-  })
-)
+export default Etudiant;

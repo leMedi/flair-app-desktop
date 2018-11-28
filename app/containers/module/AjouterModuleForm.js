@@ -1,11 +1,11 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { connect } from "react-redux";
 
-import { Drawer, Form, Button, Col, Row, Input, Select, DatePicker } from 'antd';
+import { Drawer, Form, Button, Col, Row, Input, Select, message } from 'antd';
 
-import { find, save } from '../../actions/module';
-import { find as findClasse } from '../../actions/classe';
-import { find as findProf } from '../../actions/prof';
+import { moduleFind, moduleSave } from '../../actions/module';
+import { classeFind } from '../../actions/classe';
+import { profFind } from '../../actions/prof';
 
 
 const { Option } = Select;
@@ -17,27 +17,31 @@ function hasErrors(fieldsError) {
 class AjouterModuleForm extends React.Component {
   state = { visible: false };
 
-  handleSubmit = (event) => {
-
-    event.preventDefault();
-    this.props.form.validateFields((err, module) => {
-      if (!err)
-        this.props.save(module ,  (err2, result) => {
-          if (!err2) {
-            console.log(result)
-            // @TODO: clear form
-            this.props.find();
-            this.setState({visible: false})
-            console.log('Successfully added a module!');
-          }
-        });
-      console.log(module);
-    });
-
-  }
   componentDidMount() {
-    this.props.findClasse();
-    this.props.findProf();
+    // eslint-disable-next-line react/destructuring-assignment
+    this.props.getAllClasses();
+    // eslint-disable-next-line react/destructuring-assignment
+    this.props.getAllProfs();
+  }
+
+  handleSubmit = (event) => {
+    event.preventDefault();
+
+    const {
+      form: { validateFields },
+      getAllModules,
+      saveModule,
+    } = this.props;
+
+    validateFields((validationError, _module) => {
+      if (!validationError)
+        saveModule(_module)
+          .then(() => {
+            this.setState({visible: false})
+            return getAllModules()
+          })
+          .catch(err=>message.error(err.message))
+    });
   }
 
   showDrawer = () => {
@@ -52,11 +56,27 @@ class AjouterModuleForm extends React.Component {
     });
   };
 
-
-
-
   render() {
-    const { getFieldDecorator, getFieldsError, getFieldError, isFieldTouched } = this.props.form;
+    const {
+      form: { getFieldDecorator, getFieldsError, getFieldError, isFieldTouched },
+      classes,
+      profs,
+    } = this.props;
+    
+    const { visible } = this.state;
+
+    const classeList = classes.map((classe) =>
+      <Option key={classe._id}>
+        {classe.filiere} {classe.annee} ({classe.name})
+      </Option>
+    );
+
+    const profList = profs.map((prof) =>
+      <Option key={prof._id}>
+        {prof.lastName} {prof.firstName}
+      </Option>
+    );
+    
     const nameError = isFieldTouched('name') && getFieldError('name');
     const hrsCoursError = isFieldTouched('hrsCours') && getFieldError('hrsCours');
     const hrsTDError = isFieldTouched('hrsTD') && getFieldError('hrsTD');
@@ -64,19 +84,7 @@ class AjouterModuleForm extends React.Component {
     const professeurError = isFieldTouched('professeur') && getFieldError('professeur');
     const classeError = isFieldTouched('classe') && getFieldError('classe');
     
-    const classes = this.props.classes;
-    const classeList = classes.map((classe) =>
-      <Option key={classe._id}>
-        {classe.filiere} {classe.annee} ({classe.name})
-      </Option>
-    );
-
-    const profs = this.props.profs;
-    const profList = profs.map((prof) =>
-      <Option key={prof._id}>
-        {prof.lastName} {prof.firstName}
-      </Option>
-    );
+    
     return (
       <div>
         <Button type="primary" onClick={this.showDrawer} style={{marginLeft: '100px'}}>
@@ -88,7 +96,7 @@ class AjouterModuleForm extends React.Component {
           placement="right"
           onClose={this.onClose}
           maskClosable={false}
-          visible={this.state.visible}
+          visible={visible}
           style={{
             height: 'calc(100% - 55px)',
             overflow: 'auto',
@@ -220,5 +228,10 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  { find, save, findClasse, findProf}
+  {
+    getAllModules: moduleFind,
+    saveModule: moduleSave,
+    getAllClasses: classeFind,
+    getAllProfs: profFind,
+  }
 )(RegisterForm);

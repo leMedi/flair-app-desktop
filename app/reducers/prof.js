@@ -2,22 +2,34 @@ import { TYPES } from '../actions/prof'
 
 const initState = {
   list: [],
-  profCurrent: null
+  current: null,
+
+  error: null
 };
 
 export default function profReducer(state = initState, action) {
   switch (action.type) {
-    case TYPES.PROF_FIND:
+    case TYPES.PROF_FIND_SUCCESS:
       return {
         ...state,
-        list: action.payload
+        list: action.payload,
+        error: null
       }
-    case TYPES.PROF_GETBYID:
+    case TYPES.PROF_GET_SUCCESS:
       return {
-      ...state,
-      profCurrent: action.payload
-    }
+        ...state,
+        current: action.payload,
+        error: null
+      }
+    case TYPES.PROF_ERROR:
+      return {
+        ...state,
+        error: action.payload,
+      }
     default:
-      return state;
+      return {
+        ...state,
+        error: null
+      };
   }
 }

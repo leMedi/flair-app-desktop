@@ -13,8 +13,8 @@ import {
   message,
 } from 'antd';
 
-import { find, save } from '../../actions/classe';
-import { bulkSave } from '../../models/Etudiant';
+import { classeFind, classeSave } from '../../actions/classe';
+import Etudiant from '../../models/Etudiant';
 
 function hasErrors(fieldsError) {
   return Object.keys(fieldsError).some(field => fieldsError[field]);
@@ -43,13 +43,7 @@ function xlsToJson(xlsFilePath) {
   return XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]])
 }
 
-type Props = {
-  form: Object,
-  save: Function,
-  find: Function
-};
-
-class AjoutClassForm extends React.Component<Props> {
+class AjoutClassForm extends React.Component {
 
   state = {
     visible: false,
@@ -60,6 +54,7 @@ class AjoutClassForm extends React.Component<Props> {
   };
   
   componentDidMount() {
+    // eslint-disable-next-line react/destructuring-assignment
     this.props.form.validateFields();
   }
 
@@ -93,39 +88,57 @@ class AjoutClassForm extends React.Component<Props> {
     }
   }
 
+  parseXSLS(jsonData, colNames) {
+    return this.xlsJsonData.map(e => {
+      const _etudiant = {
+        cne: e[colNames.cne],
+
+        nom: e[colNames.nom],
+        prenom: e[colNames.prenom],
+
+        password: 'helloWorld', // TODO: random generate
+
+        classe_id: 'NO_CLASSE_YET'
+      }
+      Etudiant._validate(_etudiant)
+      return _etudiant
+    })
+  }
+
   handleSubmit = (event) => {
     event.preventDefault();
     const { xlsFile } = this.state;
-    const { form: { validateFields }, save, find } = this.props;
+    const {
+      form: { validateFields },
+      getAllClasses, saveClass
+    } = this.props;
     
     if(!xlsFile) {
       this.setState({ xlsFileError: 'please provide an excel file'});
     }else
-      validateFields((validationErr, classe) => {
-        if (!validationErr)
-          save(classe)
-            .then(_class =>  {
-              console.log('clas save', _class)
-              const etudiants = this.xlsJsonData.map(e => {
-                const name = e[classe.nomColName].split(' ');
-                console.log('e', e)
-                return { 
-                  firstName: name.shift(),
-                  lastName: name.join(' '),
-                  email: 'no@email.com',
-                  cne: e[classe.cneColName],
-                  dateNaissance: e[classe.dateColName],
-                }
-              })
-              return bulkSave(etudiants, _class.id)
-            }).then(result => {
-              console.log('saved class', result)
-              this.setState({visible: false})
-              return find();
-            })
-            .catch(err=>(
-              message.error(err.message)
-            ))
+      validateFields((validationError, formData) => {
+        if (!validationError) {
+          // get data from excel
+          let etudiants = this.parseXSLS(
+            this.xlsJsonData,
+            { cne: formData.cneColName, nom: formData.nomColName, prenom: formData.prenomColName}
+          )
+
+          saveClass({
+            filiere: formData.filiere,
+            annee: formData.annee
+          }).then(classe =>{
+            etudiants = etudiants.map((e) => { e.classe_id = classe._id; return e; }) // set class if for students
+            return Etudiant.bulkSave(etudiants)
+          }).then(()=>{
+            this.setState({visible: false});
+            return getAllClasses() // update classes list
+          })
+          .catch(err=>(
+            message.error(err.message)
+          ))
+
+        }
       });
   }
 
@@ -142,7 +155,10 @@ class AjoutClassForm extends React.Component<Props> {
   };
 
   render() {
-    const { getFieldDecorator, getFieldsError, getFieldError, isFieldTouched } = this.props.form;
+    const {
+      form: { getFieldDecorator, getFieldsError, getFieldError, isFieldTouched }
+    } = this.props;
+
     const { visible, xlsFile, xlsFileError, loadingXslFile } = this.state;
     
 
@@ -321,5 +337,8 @@ const RegisterForm = Form.create()(AjoutClassForm);
 
 export default connect(
   null,
-  { find, save }
+  { 
+    getAllClasses: classeFind,
+    saveClass: classeSave
+  }
 )(RegisterForm);

@@ -6,13 +6,7 @@ const initState = {
 
   loginError: null,
 
-  modules: [
-    {
-      path: '/module/NomModule',
-      icon: "user",
-      name: "NomModule",
-    },
-  ]
+  modules: []
 };
 
 export default function sessionReducer(state = initState, action) {

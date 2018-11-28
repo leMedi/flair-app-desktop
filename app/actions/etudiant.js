@@ -1,48 +1,58 @@
-import { find as _find, save as _save } from '../models/Etudiant'
-
+import Etudiant from '../models/Etudiant'
 
 export const TYPES = {
-  ETUDIANT_FIND: 'ETUDIANT_FIND',
-  ETUDIANT_FIND_ERROR: 'ETUDIANT_FIND_ERROR',
+  ETUDIANT_FIND: '@ETUDIANT/FIND',
+  ETUDIANT_SAVE: '@ETUDIANT/SAVE',
 
-  ETUDIANT_SAVE: 'ETUDIANT_SAVE',
-  ETUDIANT_SAVE_ERROR: 'ETUDIANT_SAVE_ERROR',
+  ETUDIANT_FIND_SUCCESS: '@ETUDIANT/FIND_SUCCESS',
+  ETUDIANT_SAVE_SUCCESS: '@ETUDIANT/SAVE_SUCCESS',
 
+  ETUDIANT_ERROR: '@ETUDIANT/ERROR',
 }
 
-export function find(criteria) {
+export function etudiantFind(criteria) {
   return (dispatch) => {
-    _find(criteria)
-    .then(res => (
-      dispatch({
-        type: TYPES.ETUDIANT_FIND,
-        payload: res.docs
-      })
-    ))
-    .catch(err => {
-      dispatch({
-        type: TYPES.ETUDIANT_FIND_ERROR
-      })
-    });
-  };
-}
+    dispatch({ type: TYPES.ETUDIANT_FIND })
 
-
-export function save(etudiant, cb) {
-  return (dispatch) => {
-    _save(etudiant)
-    .then(res => {
+    Etudiant.find(criteria)
+    .then(etudiants => {
       dispatch({
-        type: TYPES.ETUDIANT_SAVE,
-        payload: res.docs
+        type: TYPES.ETUDIANT_FIND_SUCCESS,
+        payload: etudiants
       })
-      return cb(null, res)
+      return etudiants
     })
     .catch(err => {
       dispatch({
-        type: TYPES.ETUDIANT_SAVE_ERROR
+        type: TYPES.ETUDIANT_ERROR,
+        payload: err.message
       })
-      return cb(err)
-    });
-  };
+      throw err
+    })
+
+  }
+}
+
+export function etudiantSave(doc) {
+  return async (dispatch) => {
+    dispatch({ type: TYPES.ETUDIANT_SAVE })
+
+    try {
+      const etudiant = new Etudiant(doc)
+      await etudiant.save()
+
+      dispatch({
+        type: TYPES.ETUDIANT_SAVE_SUCCESS,
+        payload: etudiant.toObject()
+      })
+
+      return etudiant
+    }catch(err){
+      dispatch({
+        type: TYPES.ETUDIANT_ERROR,
+        payload: err.message
+      })
+      throw err
+    }
+  }
 }

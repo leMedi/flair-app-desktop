@@ -9,12 +9,13 @@ import ContactList from '../../components/contact/ContactList';
 import RegisterForm from './AjouterProfForm';
 
 // redux
-import { find } from '../../actions/prof';
-import { find as findModule } from '../../actions/module';
+import { profFind } from '../../actions/prof';
+import { moduleFind } from '../../actions/module';
 
 const {  Content, Sider } = Layout;
 
 function filterContacts(contacts, search) {
+  // eslint-disable-next-line no-param-reassign
   search = search.toUpperCase();
   return search
     ? contacts.filter(contact => contact.lastName.toUpperCase().includes(search))
@@ -44,9 +45,13 @@ class Index extends React.Component {
 
 
   async componentDidMount() {
-    this.props.find();
-    this.props.findModule();
-    
+    const {
+      allProfs,
+      allModules,
+    } = this.props;
+
+    allProfs();
+    allModules();
   }
 
    
@@ -55,15 +60,22 @@ class Index extends React.Component {
   }
 
   render() {
+    const {
+      profs,
+      modules,
+    } = this.props;
 
-    const selected = this.props.profs.filter(prof=>(prof._id === this.state.selectedId))
+    const {
+      selectedId,
+      search,
+    } = this.state;
+
+    const selected = profs.filter(prof=>(prof._id === selectedId))
 
     const selectedProf = selected.length ? selected[0] : 'no prof selectioner';
-    const modules = this.props.modules;
     const selectedModules = filterModule(modules, selectedProf._id);
-    console.log('prof module', selectedModules);
 
-    const profs = filterContacts(this.props.profs, this.state.search);
+    const profsFiltered = filterContacts(profs, search);
 
     return (
 
@@ -73,7 +85,7 @@ class Index extends React.Component {
             <Sider width={250} style={{ background: '#fff' }}>
               <Row>
                 <Col span={12}>
-                  <ContactSearch value={this.state.search} onSearchInputChange={this.onSearchInputChange} />
+                  <ContactSearch value={search} onSearchInputChange={this.onSearchInputChange} />
                 </Col>
                 <Col span={12}>
                   <RegisterForm />
@@ -81,12 +93,12 @@ class Index extends React.Component {
               </Row>
               <ContactList
                 onClick={this.profUpdate}
-                contacts={profs}
+                contacts={profsFiltered}
                 handelSelect={ prof => {
                   console.log('prof id', prof._id)
                   this.setState({selectedId: prof._id});
                 }}
-                selectedId={this.state.selectedId}
+                selectedId={selectedId}
               />
             </Sider>
             <Content 
@@ -114,7 +126,10 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  { find, findModule }
+  {
+    allProfs: profFind,
+    allModules: moduleFind,
+  }
 )(Index);
 
 

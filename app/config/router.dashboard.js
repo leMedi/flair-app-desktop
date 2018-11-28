@@ -10,7 +10,7 @@ import Module from '../containers/module/Module';
 import Seance from '../containers/seance/Seance';
 
 
-import HomeTemp from '../containers/HomeTemp'
+import HomePage from '../containers/HomePage'
 
 const auth = {
   isAuthenticated: ()=>((Session.get(Session.keys.AUTH)._id) ? true : false),
@@ -24,7 +24,7 @@ const routes = [
     path: '/dashbaord',
     icon: "user",
     name: "DashBoard",
-    component: HomeTemp,
+    component: HomePage,
   },
 
   {
@@ -74,7 +74,7 @@ const routes = [
   // default route
   {
     path: '/',
-    component: HomeTemp,
+    component: HomePage,
   },
 ];
 

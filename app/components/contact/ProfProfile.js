@@ -2,10 +2,9 @@ import React from 'react';
 
 import { Avatar, Row, Col, Tag} from 'antd';
 
-const ProfProfile = (props) => (
+const ProfProfile = ({selectedProf, selectedModules}) => (
   <div>
-    {console.log(props)}
-    { props.selectedProf != 'no prof selectioner' &&
+    { selectedProf !== 'no prof selectioner' &&
       <Row type="flex" >
         <Col span={12} order={3}>
           <Avatar 
@@ -16,12 +15,12 @@ const ProfProfile = (props) => (
                   marginLeft:'25px'
               }}
           />
-          <h1>{props.selectedProf.firstName} {props.selectedProf.lastName} </h1>
-          <p><strong>Email:  </strong>{props.selectedProf.email}</p>
-          <p><strong>Tel:  </strong>+(212){props.selectedProf.phone}</p>
+          <h1>{selectedProf.firstName} {selectedProf.lastName} </h1>
+          <p><strong>Email:  </strong>{selectedProf.email}</p>
+          <p><strong>Tel:  </strong>+(212){selectedProf.phone}</p>
           <div><strong>Module:  </strong>
             {
-              props.selectedModules.map((module) => (<Tag key={module._id} color="blue">{module.name}</Tag> ))
+              selectedModules.map(_module => (<Tag key={_module._id} color="blue">{_module.name}</Tag> ))
             }
           </div>
         </Col>

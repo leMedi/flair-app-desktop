@@ -1,17 +1,28 @@
 import { TYPES } from '../actions/etudiant'
 
 const initState = {
-  list: []
+  list: [],
+
+  error: null,
 };
 
-export default function etudReducer(state = initState, action) {
+export default function etudiantReducer(state = initState, action) {
   switch (action.type) {
-    case TYPES.ETUDIANT_FIND:
+    case TYPES.ETUDIANT_FIND_SUCCESS:
       return {
         ...state,
-        list: action.payload
+        list: action.payload,
+        error: null
+      }
+    case TYPES.ETUDIANT_ERROR:
+      return {
+        ...state,
+        error: action.payload,
       }
     default:
-      return state;
+      return {
+        ...state,
+        error: null
+      };
   }
 }

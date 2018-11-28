@@ -2,29 +2,42 @@ import { TYPES } from '../actions/module'
 
 const initState = {
   list: [],
-  modulesProf : [],
-  currentModule: null
+  current: null,
 
+  profModules: [],
+
+  error: null
 };
 
 export default function moduleReducer(state = initState, action) {
   switch (action.type) {
-    case TYPES.MODULE_FIND:
+    case TYPES.MODULE_FIND_SUCCESS:
       return {
         ...state,
-        list: action.payload
+        list: action.payload,
+        error: null
       }
-    case TYPES.MODULE_GETPROFBYID:
-    return {
-      ...state,
-      modulesProf: action.payload
-    }
-    case TYPES.MODULE_GETBYID:
-    return {
-      ...state,
-      currentModule : action.payload
-    }
+    case TYPES.MODULE_GET_SUCCESS:
+      return {
+        ...state,
+        current: action.payload,
+        error: null
+      }
+    case TYPES.PROF_MODULES_SUCCESS:
+      return {
+        ...state,
+        profModules: action.payload,
+        error: null
+      }
+    case TYPES.MODULE_ERROR:
+      return {
+        ...state,
+        error: action.payload,
+      }
     default:
-      return state;
+      return {
+        ...state,
+        error: null
+      };
   }
 }

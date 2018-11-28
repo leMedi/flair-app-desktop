@@ -138,6 +138,11 @@ const ModelMaker = (type, _schema) => {
       const docs = _docs.map(doc => Object.assign(doc ,{_deleted: true}))
       return Model._bulk(docs, options)
     }
+
+    static async bulkSave(_docs = [], options) {
+      const docs = _docs.forEach(doc => Model._validate(doc))
+      return Model._bulk(docs, options)
+    }
   }
 }
 

@@ -5,19 +5,9 @@ import { Card, Table, Divider, Icon, Popconfirm, message } from 'antd';
 
 import RegisterForm from './AjoutClassForm';
 
-import { find } from '../../actions/classe';
-import { removeClasse } from '../../models/Classe';
+import { classeFind, classeDelete } from '../../actions/classe';
 
-
-type Props = {
-  getAllClasses: () => Promise,
-  classes: Array,
-  history: {
-    push: ({ pathname: string }) => Promise
-  }
-};
-
-class ClasseList extends Component<Props> {
+class ClasseList extends Component {
 
   componentDidMount() {
     const { getAllClasses } = this.props;
@@ -57,12 +47,11 @@ class ClasseList extends Component<Props> {
     ),
   }];
 
-  deleteClasse(classe) {
-    const { getAllClasses } = this.props;
-    removeClasse(classe).then(() => (
-      getAllClasses() // update classes list after delete
-    )).catch((err) => {message.error(`Couldn't delete Classe: ${err.message}`)})
-    return false;
+  deleteClasse(classeId) {
+    const { getAllClasses, deleteClass } = this.props;
+    deleteClass(classeId)
+      .then(() => getAllClasses()) // update classes list after delete
+      .catch((err) => {message.error(`Couldn't delete Classe: ${err.message}`)})
   }
 
   render() {
@@ -100,6 +89,9 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  { getAllClasses: find }
+  {
+    getAllClasses: classeFind,
+    deleteClass: classeDelete
+  }
 )(ClasseList);
   

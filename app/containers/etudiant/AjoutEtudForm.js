@@ -1,11 +1,9 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { connect } from "react-redux";
 
-import { Drawer, Form, Button, Col, Row, Input, Select, DatePicker } from 'antd';
+import { Drawer, Form, Button, Col, Row, Input } from 'antd';
 
-import { find, save } from '../../actions/etudiant';
-
-const { Option } = Select;
+import { etudiantFind, etudiantSave } from '../../actions/etudiant';
 
 function hasErrors(fieldsError) {
   return Object.keys(fieldsError).some(field => fieldsError[field]);
@@ -15,23 +13,24 @@ class AjoutEtudForm extends React.Component {
   state = { visible: false };
   
   handleSubmit = (event) => {
-
     event.preventDefault();
-    this.props.form.validateFields((err, etudiant) => {
-      console.log('student form', etudiant)
-      if (!err)
-        this.props.save({
-          ...etudiant,
-          classe: this.props.classe._id // change classe name by it's id
-        } ,  (err2, result) => {
-          if (!err2) {
-            console.log(result)
-            // @TODO: clear form
-            this.props.find({ classe: this.props.classe._id});
-            this.setState({visible: false})
-            console.log('Successfully added a student!');
-          }
-        });
+
+    const {
+      form: { validateFields },
+      newEtudiant,
+      fetchEtudiants,
+      classe,
+    } = this.props;
+
+    validateFields((validationError, etudiant) => {
+      if (!validationError)
+      newEtudiant({
+        ...etudiant,
+        classe_id: classe._id
+      }) // add new student
+      .then(() => fetchEtudiants({ classe_id: classe._id })) // update students list
+      .then(()=> this.setState({visible: false})) // hide form
+      .catch(err=>console.error(err.message)) 
     });
 
   }
@@ -49,13 +48,13 @@ class AjoutEtudForm extends React.Component {
   };
 
   render() {
-    const classes = this.props.classes;
-    const listItems = classes.map((classe) =>
-      <Option key={classe._id}>
-        {classe.filiere}
-      </Option>
-    );
-    const { getFieldDecorator, getFieldsError, getFieldError, isFieldTouched } = this.props.form;
+    
+    const {
+      form: { getFieldDecorator, getFieldsError, getFieldError, isFieldTouched },
+      classe,
+    } = this.props;
+
+    const { visible } = this.state;
     
     const firstNameError = isFieldTouched('firstName') && getFieldError('firstName');
     const lastNameError = isFieldTouched('lastName') && getFieldError('lastName');
@@ -71,7 +70,7 @@ class AjoutEtudForm extends React.Component {
           placement="right"
           onClose={this.onClose}
           maskClosable={false}
-          visible={this.state.visible}
+          visible={visible}
           style={{
             height: 'calc(100% - 55px)',
             overflow: 'auto',
@@ -119,7 +118,7 @@ class AjoutEtudForm extends React.Component {
               </Col>
               <Col span={12}> 
                 <Form.Item label="Classe">
-                  <Input value={this.props.classe.filiere} disabled={true} />
+                  <Input value={classe.filiere} disabled />
                 </Form.Item>
               </Col>
             </Row>
@@ -162,11 +161,10 @@ class AjoutEtudForm extends React.Component {
 
 const RegisterForm = Form.create()(AjoutEtudForm);
 
-const mapStateToProps = state => ({
-  classes: state.classe.list
-});
-
 export default connect(
-  mapStateToProps,
-  { find, save }
+  null,
+  { 
+    fetchEtudiants: etudiantFind,
+    newEtudiant: etudiantSave
+  }
 )(RegisterForm);
