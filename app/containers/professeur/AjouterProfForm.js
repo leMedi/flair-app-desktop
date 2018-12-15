@@ -59,15 +59,14 @@ class AjouterProfForm extends React.Component {
 
     const { visible } = this.state;
 
-    const firstNameError = isFieldTouched('firstName') && getFieldError('firstName');
-    const lastNameError = isFieldTouched('lastName') && getFieldError('lastName');
-    const emailError = isFieldTouched('email') && getFieldError('email');
-    const phoneError = isFieldTouched('phone') && getFieldError('phone');
-    const password = isFieldTouched('password') && getFieldError('phone');
+    const nomError = isFieldTouched('nom') && getFieldError('nom');
+    const prenomError = isFieldTouched('prenom') && getFieldError('prenom');
+    const sommeError = isFieldTouched('somme') && getFieldError('somme');
+    const password = isFieldTouched('password') && getFieldError('password');
 
     return (
       <div>
-        <Button type="primary" onClick={this.showDrawer} style={{marginLeft: '100px'}}>
+        <Button type="primary" onClick={this.showDrawer} style={{float: 'right'}}>
           Ajouter Prof
         </Button>
         <Drawer
@@ -83,30 +82,19 @@ class AjouterProfForm extends React.Component {
             paddingBottom: 53,
           }}>
           <Form layout="vertical" hideRequiredMark onSubmit={this.handleSubmit}>
-            <Row gutter={16}>
-              <Col span={12}>
+            <Row>
+              <Col span={24}>
                 <Form.Item
-                  label="First Name"
-                  validateStatus={firstNameError ? 'error' : ''}
-                  help={firstNameError || ''}
+                  label="somme"
+                  validateStatus={sommeError ? 'error' : ''}
+                  help={sommeError || ''}  
                 >
-                  {getFieldDecorator('firstName', {
-                    rules: [{ required: true, message: 'Please enter fisrtName' }],
+                  {getFieldDecorator('somme', {
+                    rules: [
+                      { required: true, message: 'le numero de somme est invalid' },
+                    ],
                   })(
-                    <Input placeholder="please enter your first name" onChange={this.handleChange} />
-                  )}
-                </Form.Item>
-              </Col>
-              <Col span={12}>
-                <Form.Item
-                label="Last Name"
-                validateStatus={lastNameError ? 'error' : ''}
-                help={lastNameError || ''}
-                >
-                {getFieldDecorator('lastName', {
-                    rules: [{ required: true, message: 'Please enter lastName' }],
-                  })(
-                    <Input placeholder="please enter last name" onChange={this.handleChange} />
+                    <Input placeholder="numero de somme" onChange={this.handleChange} />
                   )}
                 </Form.Item>
               </Col>
@@ -114,20 +102,32 @@ class AjouterProfForm extends React.Component {
             <Row gutter={16}>
               <Col span={12}>
                 <Form.Item
-                  label="Email"
-                  validateStatus={emailError ? 'error' : ''}
-                  help={emailError || ''}  
+                  label="Nom"
+                  validateStatus={nomError ? 'error' : ''}
+                  help={nomError || ''}
                 >
-                  {getFieldDecorator('email', {
-                    rules: [
-                      { type: 'email', message: 'The input is not valid E-mail!' },
-                      { required: true, message: 'Please input your E-mail!' },
-                    ],
+                  {getFieldDecorator('nom', {
+                    rules: [{ required: true, message: 'le Nom est invalid' }],
                   })(
-                    <Input placeholder="please enter email" onChange={this.handleChange} />
+                    <Input placeholder="Hafidi" onChange={this.handleChange} />
                   )}
                 </Form.Item>
               </Col>
+              <Col span={12}>
+                <Form.Item
+                label="Prenom"
+                validateStatus={prenomError ? 'error' : ''}
+                help={prenomError || ''}
+                >
+                {getFieldDecorator('prenom', {
+                    rules: [{ required: true, message: 'le Prenom est invalid' }],
+                  })(
+                    <Input placeholder="Imad" onChange={this.handleChange} />
+                  )}
+                </Form.Item>
+              </Col>
+            </Row>
+            <Row gutter={16}>
               <Col span={12}>
                 <Form.Item
                   label="Mot de Pass"
@@ -140,19 +140,6 @@ class AjouterProfForm extends React.Component {
                     ],
                   })(
                     <Input type="password" onChange={this.handleChange} />
-                  )}
-                </Form.Item>
-              </Col>
-              <Col span={12}>
-                <Form.Item
-                  label="Phone Number"
-                  validateStatus={phoneError ? 'error' : ''}
-                  help={phoneError || ''}  
-                >
-                  {getFieldDecorator('phone', {
-                    rules: [{ required: true, message: 'Please enter the phone number' }],
-                  })(
-                    <Input placeholder="please enter phone" onChange={this.handleChange} />
                   )}
                 </Form.Item>
               </Col>
@@ -196,7 +183,6 @@ class AjouterProfForm extends React.Component {
     );
   }
 }
-
 
 const RegisterForm = Form.create()(AjouterProfForm);
 

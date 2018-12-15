@@ -2,7 +2,7 @@ import Model, { Joi } from '../utils/Model'
 import Etudiant from './Etudiant'
 
 const Classe = Model('classe', Joi.object().keys({
-  filiere: Joi.string().min(3).max(10).required(),
+  filiere: Joi.string().max(10).required(),
   annee: Joi.number().min(2007).required(),
 }));
 

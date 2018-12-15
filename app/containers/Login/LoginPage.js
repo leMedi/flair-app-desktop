@@ -3,7 +3,8 @@ import { connect } from 'react-redux';
 import { Checkbox, Alert, Icon, Form, Input, Button } from 'antd';
 import styles from './LoginPage.less';
 
-import { profLogin as _profLogin } from '../../actions/session'
+import { profLogin } from '../../actions/session'
+import routes from '../../constants/routes.json'
 
 const FormItem = Form.Item;
 
@@ -12,44 +13,31 @@ function hasErrors(fieldsError) {
 }
 
 class LoginPage extends Component {
-  state = {
-    autoLogin: true,
-  };
 
   componentDidMount() {
     // To disabled submit button at the beginning.
+    // eslint-disable-next-line react/destructuring-assignment
     this.props.form.validateFields()
   }
 
   handleSubmit = (e) => {
     e.preventDefault();
+    
     const {
-      profLogin,
+      login,
       history,
       form: { validateFields }
     } = this.props
     
-    validateFields((err, values) => {
+    validateFields((err, {somme, password}) => {
       if (!err) {
-        profLogin(values.email, values.password, (prof) => {
-          console.log('login success', prof)
-          history.push('/')
-        })
-          // .then((prof) => {
-          //   console.log('login success', prof)
-          //   history.push('/')
-          //   return prof
-          // })
-          // .catch((error) => console.log('login error', error))
+        login(somme, password)
+          // redirect to home
+          .then(()=> history.push(routes.HOME))
+          .catch()
       }
     });
   }
-
-  changeAutoLogin = e => {
-    this.setState({
-      autoLogin: e.target.checked,
-    });
-  };
 
   renderMessage = content => (
     <Alert style={{ marginBottom: 24 }} message={content} type="error" showIcon />
@@ -61,7 +49,7 @@ class LoginPage extends Component {
       submitError
     } = this.props;
 
-    const emailError = isFieldTouched('email') && getFieldError('email');
+    const sommeError = isFieldTouched('somme') && getFieldError('somme');
     const passwordError = isFieldTouched('password') && getFieldError('password');
 
     return (
@@ -69,16 +57,15 @@ class LoginPage extends Component {
         {submitError && this.renderMessage(submitError)}
         <Form onSubmit={this.handleSubmit} className="login-form">
           <FormItem
-            validateStatus={emailError ? 'error' : ''}
-            help={emailError || ''}
+            validateStatus={sommeError ? 'error' : ''}
+            help={sommeError || ''}
           >
-            {getFieldDecorator('email', {
+            {getFieldDecorator('somme', {
               rules: [
-                { type: 'email', message: 'The email is not valid!' },
-                { required: true, message: 'Please input your email!' },
+                { required: true, message: 'Numero de somme invalid' },
               ],
             })(
-              <Input prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="email" />
+              <Input prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="somme" />
             )}
           </FormItem>
           <FormItem
@@ -121,8 +108,7 @@ const mapStateToProps = state => ({
   submitError: state.session.loginError
 });
 
-
 export default connect(
   mapStateToProps,
-  { profLogin: _profLogin }
+  { login: profLogin }
 )(WrappedLoginPage);

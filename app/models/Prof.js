@@ -10,11 +10,11 @@ const Prof = Model("prof", Joi.object().keys({
   role: Joi.string().equal(['prof', 'admin']).default('prof')
 }));
 
-Prof.login = async (email, password) => {
-  const result = await Prof.find({ email })
+Prof.login = async (somme, password) => {
+  const result = await Prof.find({ somme })
 
   if(result.length === 0)
-    throw new Error('email not found')
+    throw new Error("Numero de somme n'exist pas")
   
   const prof = result[0]
 

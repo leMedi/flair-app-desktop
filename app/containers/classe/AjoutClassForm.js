@@ -10,6 +10,7 @@ import {
   Input,
   Upload,
   Icon,
+  Switch,
   message,
 } from 'antd';
 
@@ -47,7 +48,8 @@ class AjoutClassForm extends React.Component {
 
   state = {
     visible: false,
-
+    
+    isXlsFile: false,
     xlsFile: null,
     xlsFileError: null,
     loadingXslFile: false,
@@ -98,7 +100,7 @@ class AjoutClassForm extends React.Component {
 
         password: 'helloWorld', // TODO: random generate
 
-        classe_id: 'NO_CLASSE_YET'
+        classeId: 'NO_CLASSE_YET'
       }
       Etudiant._validate(_etudiant)
       return _etudiant
@@ -107,28 +109,33 @@ class AjoutClassForm extends React.Component {
 
   handleSubmit = (event) => {
     event.preventDefault();
-    const { xlsFile } = this.state;
+    const { isXlsFile, xlsFile } = this.state;
     const {
       form: { validateFields },
       getAllClasses, saveClass
     } = this.props;
     
-    if(!xlsFile) {
+    if(isXlsFile && !xlsFile) {
       this.setState({ xlsFileError: 'please provide an excel file'});
     }else
       validateFields((validationError, formData) => {
         if (!validationError) {
-          // get data from excel
-          let etudiants = this.parseXSLS(
-            this.xlsJsonData,
-            { cne: formData.cneColName, nom: formData.nomColName, prenom: formData.prenomColName}
-          )
+          let etudiants;
+          
+          if(isXlsFile)
+            // get data from excel
+            etudiants = this.parseXSLS(
+              this.xlsJsonData,
+              { cne: formData.cneColName, nom: formData.nomColName, prenom: formData.prenomColName}
+            )
 
           saveClass({
             filiere: formData.filiere,
             annee: formData.annee
           }).then(classe =>{
-            etudiants = etudiants.map((e) => { e.classe_id = classe._id; return e; }) // set class if for students
+            if(!isXlsFile)
+              return false
+            etudiants = etudiants.map((e) => { e.classeId = classe._id; return e; }) // set class if for students
             return Etudiant.bulkSave(etudiants)
           }).then(()=>{
             this.setState({visible: false});
@@ -154,25 +161,26 @@ class AjoutClassForm extends React.Component {
     });
   };
 
+  onXlsSwitch(checked) { this.setState({ isXlsFile: checked }) }
+
   render() {
     const {
-      form: { getFieldDecorator, getFieldsError, getFieldError, isFieldTouched }
+      form: { getFieldDecorator, getFieldsError, getFieldError, isFieldTouched },
     } = this.props;
 
-    const { visible, xlsFile, xlsFileError, loadingXslFile } = this.state;
+    const { visible, isXlsFile, xlsFile, xlsFileError, loadingXslFile } = this.state;
     
 
     const filiereError = isFieldTouched('filiere') && getFieldError('filiere');
     const anneeError = isFieldTouched('annee') && getFieldError('annee');
-    const nameError = isFieldTouched('name') && getFieldError('name');
 
-    const nomColError = isFieldTouched('nomColName') && getFieldError('nomColName');
     const cneColError = isFieldTouched('cneColName') && getFieldError('cneColName');
-    const dateColError = isFieldTouched('dateColName') && getFieldError('dateColName');
+    const nomColError = isFieldTouched('nomColName') && getFieldError('nomColName');
+    const prenomColError = isFieldTouched('prenomColName') && getFieldError('prenomColName');
 
     return (
       <div>
-        <Button type="primary" onClick={this.showDrawer} style={{marginBottom: '20px'}}>
+        <Button type="primary" onClick={this.showDrawer} style={{ float: 'right' }}>
           Ajouter Classe
         </Button>
         <Drawer
@@ -213,35 +221,15 @@ class AjoutClassForm extends React.Component {
                 </Form.Item>
               </Col>
             </Row>
-            <Row gutter={16}>
-              <Col span={12}>
-                <Form.Item 
-                  label="Name"
-                  validateStatus={nameError ? 'error' : ''}
-                  help={nameError || ''}
-                >
-                  {getFieldDecorator('name', {
-                    rules: [{ required: true, message: 'please enter Nom' }],
-                  })(<Input placeholder="name" />)}
-                </Form.Item>
-              </Col>
-            </Row>
+
 
             <h3>Etudiants</h3>
-
+            <Form.Item
+              label="Fichier Excel Des Etudiants"
+            >
+              <Switch onChange={this.onXlsSwitch.bind(this)}/>
+            </Form.Item>
             <Row gutter={16}>
-              <Col span={8}>
-                <Form.Item 
-                  label="Nom"
-                  validateStatus={nomColError ? 'error' : ''}
-                  help={nomColError || ''}
-                >
-                  {getFieldDecorator('nomColName', {
-                    initialValue: 'nom & prenom',
-                    rules: [{ required: true, message: 'Ce champ est requis!' }],
-                  })(<Input name="nomColName" id="nomColName"/>)}
-                </Form.Item>
-              </Col>
               <Col span={8}>
                 <Form.Item 
                   label="CNE"
@@ -249,21 +237,33 @@ class AjoutClassForm extends React.Component {
                   help={cneColError || ''}
                 >
                   {getFieldDecorator('cneColName', {
-                    initialValue: 'cne',
+                    initialValue: 'CNE',
                     rules: [{ required: true, message: 'Ce champ est requis!' }],
-                  })(<Input name="cneColName" id="cneColName"/>)}
+                  })(<Input name="cneColName" disabled={isXlsFile}/>)}
                 </Form.Item>
               </Col>
               <Col span={8}>
                 <Form.Item 
-                  label="Date de Naissance"
-                  validateStatus={dateColError ? 'error' : ''}
-                  help={dateColError || ''}
+                  label="Nom"
+                  validateStatus={nomColError ? 'error' : ''}
+                  help={nomColError || ''}
                 >
-                  {getFieldDecorator('dateColName', {
-                    initialValue: 'date de naissance',
+                  {getFieldDecorator('nomColName', {
+                    initialValue: 'Nom',
                     rules: [{ required: true, message: 'Ce champ est requis!' }],
-                  })(<Input name="dateColName" id="dateColName"/>)}
+                  })(<Input name="nomColName" disabled={isXlsFile}/>)}
+                </Form.Item>
+              </Col>
+              <Col span={8}>
+                <Form.Item 
+                  label="Prenom"
+                  validateStatus={prenomColError ? 'error' : ''}
+                  help={prenomColError || ''}
+                >
+                  {getFieldDecorator('prenomColName', {
+                    initialValue: 'Prenom',
+                    rules: [{ required: true, message: 'Ce champ est requis!' }],
+                  })(<Input name="prenomColName" disabled={isXlsFile}/>)}
                 </Form.Item>
               </Col>
 
@@ -279,6 +279,7 @@ class AjoutClassForm extends React.Component {
                   showUploadList={false}
                   beforeUpload={beforeUpload}
                   onChange={this.uploaderHandleChange}
+                  disabled={isXlsFile}
                 >
                   {xlsFile ? (
                     <div>
@@ -321,7 +322,7 @@ class AjoutClassForm extends React.Component {
                 htmlType="submit"
                 type="primary"
                 onClick={this.handleSubmit}
-                disabled={hasErrors(getFieldsError()) || !xlsFile}
+                disabled={hasErrors(getFieldsError()) || (isXlsFile && !xlsFile)}
               >
                 Ajouter
               </Button>

@@ -1,4 +1,5 @@
 import Prof from './models/Prof' 
+import DefaultAdmin from './constants/admin.default.json'
 
 // sync db
 export async function syncDB() {
@@ -11,16 +12,7 @@ export async function createDefaultAdmin() {
   const admins = await Prof.find({ role: 'admin' })
 
   if(admins.length === 0) {
-    const admin = new Prof({
-      firstName: 'Admin',
-      lastName: 'Prof',
-      phone: '0123456789',
-
-      email: 'admin@ensa.com',
-      password: 'admin123456',
-
-      role: 'admin'
-    })
+    const admin = new Prof(DefaultAdmin)
 
     await admin.save()
 

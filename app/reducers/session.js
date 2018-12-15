@@ -11,12 +11,12 @@ const initState = {
 
 export default function sessionReducer(state = initState, action) {
   switch (action.type) {
-    case TYPES.LOGIN:
+    case TYPES.PROF:
       return {
         ...state,
         currentProf: action.payload
       }
-    case TYPES.LOGIN_ERROR:
+    case TYPES.PROF_ERROR:
       return {
         ...state,
         loginError: action.payload
@@ -31,7 +31,7 @@ export default function sessionReducer(state = initState, action) {
       return {
         ...state,
         modules: action.payload.map(
-          module => Object.assign(module, { icon: 'user', path: `/modules/${module._id}` })
+          _module => ({ icon: 'user', path: `/modules/${_module._id}`, name: _module.nom })
         )
       }
     default:

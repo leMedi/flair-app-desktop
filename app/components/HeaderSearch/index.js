@@ -7,27 +7,27 @@ import Bind from 'lodash-decorators/bind';
 import styles from './index.less';
 
 export default class HeaderSearch extends PureComponent {
-  static propTypes = {
-    className: PropTypes.string,
-    placeholder: PropTypes.string,
-    onSearch: PropTypes.func,
-    onPressEnter: PropTypes.func,
-    defaultActiveFirstOption: PropTypes.bool,
-    dataSource: PropTypes.arrayOf(PropTypes.string),
-    defaultOpen: PropTypes.bool,
-    onVisibleChange: PropTypes.func,
-  };
+  // static propTypes = {
+  //   className: PropTypes.string,
+  //   placeholder: PropTypes.string,
+  //   onSearch: PropTypes.func,
+  //   onPressEnter: PropTypes.func,
+  //   defaultActiveFirstOption: PropTypes.bool,
+  //   dataSource: PropTypes.arrayOf(PropTypes.string),
+  //   defaultOpen: PropTypes.bool,
+  //   onVisibleChange: PropTypes.func,
+  // };
 
-  static defaultProps = {
-    defaultActiveFirstOption: false,
-    onPressEnter: () => {},
-    onSearch: () => {},
-    className: '',
-    placeholder: '',
-    dataSource: [],
-    defaultOpen: false,
-    onVisibleChange: () => {},
-  };
+  // static defaultProps = {
+  //   defaultActiveFirstOption: false,
+  //   onPressEnter: () => {},
+  //   onSearch: () => {},
+  //   className: '',
+  //   placeholder: '',
+  //   dataSource: [],
+  //   defaultOpen: false,
+  //   onVisibleChange: () => {},
+  // };
 
   constructor(props) {
     super(props);

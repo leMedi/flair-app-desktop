@@ -64,6 +64,7 @@ class DashboardLayout extends Component {
     };
 
     
+    // eslint-disable-next-line react/destructuring-assignment
     this.props.updateCurrentProf()
   }
 
@@ -98,7 +99,6 @@ class DashboardLayout extends Component {
     const {
       navTheme,
       layout: PropsLayout,
-      children,
       location,
       location: { pathname },
       currentProf,

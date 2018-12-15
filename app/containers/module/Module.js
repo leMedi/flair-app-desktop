@@ -71,7 +71,7 @@ class Module extends React.Component {
     if (moduleId !== prevProps.match.params.id) {
       this.props.getModuleById(moduleId);
       this.props.findAllSeance({
-        module_id: moduleId
+        moduleId: moduleId
       });
     }
   }

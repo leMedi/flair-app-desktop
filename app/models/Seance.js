@@ -3,7 +3,7 @@ import Model, { Joi } from '../utils/Model'
 
 const Seance = Model("seance", Joi.object().keys({
   name: Joi.string().min(3).max(30).required(),
-  module_id: Joi.string().required(),
+  moduleId: Joi.string().required(),
   
   description: Joi.string(),
   date: Joi.string().required(),

@@ -35,7 +35,18 @@ class AjouterModuleForm extends React.Component {
 
     validateFields((validationError, _module) => {
       if (!validationError)
-        saveModule(_module)
+        saveModule({
+          nom: _module.name,
+
+          chargeHoraire: {
+            cours: _module.hrsCours,
+            td:_module.hrsTD,
+            tp:_module.hrsTP,
+          },
+
+          classeId: _module.classe,
+          profId: _module.professeur,
+        })
           .then(() => {
             this.setState({visible: false})
             return getAllModules()
@@ -67,13 +78,13 @@ class AjouterModuleForm extends React.Component {
 
     const classeList = classes.map((classe) =>
       <Option key={classe._id}>
-        {classe.filiere} {classe.annee} ({classe.name})
+        {classe.filiere} {classe.annee}
       </Option>
     );
 
     const profList = profs.map((prof) =>
       <Option key={prof._id}>
-        {prof.lastName} {prof.firstName}
+        {prof.nom} {prof.prenom}
       </Option>
     );
     
@@ -87,7 +98,7 @@ class AjouterModuleForm extends React.Component {
     
     return (
       <div>
-        <Button type="primary" onClick={this.showDrawer} style={{marginLeft: '100px'}}>
+        <Button type="primary" onClick={this.showDrawer} style={{float: 'right'}}>
           Ajouter Module
         </Button>
         <Drawer
@@ -105,7 +116,7 @@ class AjouterModuleForm extends React.Component {
         >
           <Form layout="vertical" hideRequiredMark onSubmit={this.handleSubmit}>
             <Row gutter={16}>
-              <Col span={12}>
+              <Col span={24}>
                 <Form.Item 
                   label="Name"
                   validateStatus={nameError ? 'error' : ''}
@@ -116,36 +127,51 @@ class AjouterModuleForm extends React.Component {
                   })(<Input placeholder="please enter Name" />)}
                 </Form.Item>
               </Col>
-              <Col span={4}>
+            </Row>
+            <Row gutter={16}>
+              <h3>La Charge Horaire</h3>
+              <Col span={8}>
                 <Form.Item 
-                  label="Nbr hrs Cours"
+                  label="Cours"
                   validateStatus={hrsCoursError ? 'error' : ''}
                   help={hrsCoursError || ''}
                 >
                   {getFieldDecorator('hrsCours', {
-                    rules: [{ required: true, message: 'Field is required' }],
+                    initialValue: 10,
+                    rules: [
+                      { type: "number", message: 'Doit etre un nombre' },
+                      { required: true, message: 'Field is required' }
+                    ],
                   })( <Input />)}
                 </Form.Item>
               </Col>
-              <Col span={4}>
+              <Col span={8}>
                 <Form.Item 
-                  label="Nbrs hrs TD"
+                  label="TD"
                   validateStatus={hrsTDError ? 'error' : ''}
                   help={hrsTDError || ''}
                 >
                   {getFieldDecorator('hrsTD', {
-                    rules: [{ required: true, message: 'Field is required' }],
+                    initialValue: 10,
+                    rules: [
+                      { type: "number", message: 'Doit etre un nombre' },
+                      { required: true, message: 'Field is required' }
+                    ],
                   })(<Input />)}
                 </Form.Item>
               </Col>
-              <Col span={4}>
+              <Col span={8}>
                 <Form.Item 
-                  label="Nbrs hrs TP"
+                  label="TP"
                   validateStatus={hrsTPError ? 'error' : ''}
                   help={hrsTPError || ''}
                 >
                   {getFieldDecorator('hrsTP', {
-                    rules: [{ required: true, message: 'Field is required' }],
+                    initialValue: 10,
+                    rules: [
+                      { type: "number", message: 'Doit etre un nombre' },
+                      { required: true, message: 'Field is required' }
+                    ],
                   })(<Input />)}
                 </Form.Item>
               </Col>

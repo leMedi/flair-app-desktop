@@ -1,0 +1,10 @@
+{
+  "somme": "12345678900",
+
+  "nom": "Admin",
+  "prenom": "ParDefaut",
+
+  "password": "admin123456",
+
+  "role": "admin"
+}

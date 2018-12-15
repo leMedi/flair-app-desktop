@@ -3,9 +3,8 @@ import { connect } from "react-redux";
 
 import { Layout, Card, Row, Col } from 'antd';
 
+import { List, Profile } from '../../components/Etudiant';
 import ContactSearch from '../../components/contact/ContactSearch';
-import EtudiantProfile from '../../components/contact/EtudiantProfile';
-import ContactList from '../../components/contact/ContactList';
 import RegisterForm from '../etudiant/AjoutEtudForm';
 
 // redux
@@ -18,8 +17,11 @@ function filterContacts(contacts, search) {
     // eslint-disable-next-line no-param-reassign
     search = search.toUpperCase();
     return search
-      ? contacts.filter(contact => contact.lastName.toUpperCase().includes(search))
-      : contacts;
+      ? contacts.filter(contact => (
+          contact.nom.toUpperCase().includes(search)
+          || contact.prenom.toUpperCase().includes(search)
+        ))
+      : contacts
 }
 
 class Classe extends React.Component {
@@ -37,13 +39,13 @@ class Classe extends React.Component {
 
   componentDidMount() {
     const {
-      match: { params: id },
+      match: { params: { id } },
       findEtudiants,
       getClass
     } = this.props
     
     getClass(id);
-    findEtudiants({ classe_id: id })
+    findEtudiants({ classeId: id })
   }
 
   onSearchInputChange (event)  {
@@ -61,39 +63,35 @@ class Classe extends React.Component {
     const etudiantsFiltered = filterContacts(etudiants, search);
 
     return (
-
-      <Card bordered={false}>
-          
-        {classe && (
-        <Content style={{ padding: '0 10px' }}>
-          <h3>{classe.name}</h3>
-          <Layout style={{ padding: '24px 0', background: '#fff' }}>
-            <Sider width={250} style={{ background: '#fff' }}>
-              <Row>
-                <Col span={12}>
+      <div>
+      {classe && (
+        <Card
+          title={`Classe: ${classe.filiere} ${classe.annee}`}
+          extra={<RegisterForm classe={classe} />}
+          bordered
+        >
+          <Content style={{ padding: '0 10px' }}>
+            <Layout style={{ padding: '24px 0', background: '#fff' }}>
+              <Sider width={250} style={{ background: '#fff' }}>
+                <Row>
                   <ContactSearch value={search} onSearchInputChange={this.onSearchInputChange} />
-                </Col>
-                <Col span={12}>
-                  <RegisterForm classe={classe} />
-                </Col>
-              </Row>
-              <ContactList 
-                contacts={etudiantsFiltered}
-                handelSelect={ etudiant => {
-                    this.setState({selectedId: etudiant._id});
-                }}
-                selectedId = {selectedId}
-              />
-            </Sider>
-            <Content style={{ padding: '0 80px', margin: '70px 80px' , minHeight: 280, borderLeft:'1px solid rgba(128, 128, 128, 0.28)' }}>
-              <EtudiantProfile classe={classe} selectedEtudiant={selectedEtudiant}/>
-            </Content>
-          </Layout>
-        </Content>
-        )}
-              
-      </Card>
-
+                </Row>
+                <List 
+                  contacts={etudiantsFiltered}
+                  handelSelect={ etudiant => {
+                      this.setState({selectedId: etudiant._id});
+                  }}
+                  selectedId = {selectedId}
+                />
+              </Sider>
+              <Content style={{ padding: '20px 80px', minHeight: 280, borderLeft:'1px solid rgba(128, 128, 128, 0.28)' }}>
+                <Profile etudiant={selectedEtudiant}/>
+              </Content>
+            </Layout>
+          </Content>
+        </Card>
+      )}
+      </div>
     )
   };
 

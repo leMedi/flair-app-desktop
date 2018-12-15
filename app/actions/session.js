@@ -4,22 +4,20 @@ import Session from '../utils/Session'
 
 export const TYPES = {
 
-  LOGIN: 'LOGIN_XX',
-  LOGIN_ERROR: 'ERROR',
+  PROF: '@LOGIN/PROF_LOGIN',
+  PROF_ERROR: '@LOGIN/PROF_ERROR',
 
-  UPDATE_PROF: 'PROF',
-  UPDATE_PROF_MODULES: 'MODULES',
+  UPDATE_PROF: '@SESSION/PROF',
+  UPDATE_PROF_MODULES: '@SESSION/MODULES',
 
-  ERROR: '',
+  ERROR: '@SESSION/ERROR',
 
 }
 
-export function profLogin(email, password, cb) {
+export function profLogin(email, password) {
   return (dispatch) => {
-    // clear var
-    console.log('profLogin', email, password);
     dispatch({
-      type: TYPES.LOGIN_ERROR,
+      type: TYPES.PROF_ERROR,
       payload: null
     })
 
@@ -30,19 +28,14 @@ export function profLogin(email, password, cb) {
           payload: prof.toObject()
         })
 
-        console.log('prof login action', email, password, prof)
-
         // save current user session
         Session.set(Session.keys.AUTH, prof.toObject())
-        
-        cb(prof)
         
         return prof
       })
       .catch(err => {
-        console.log(err)
         dispatch({
-          type: TYPES.LOGIN_ERROR,
+          type: TYPES.PROF_ERROR,
           payload: err.message
         })
       });
@@ -53,6 +46,7 @@ export function updateCurrentProf(profId = null) {
   return (dispatch) => {
     
     if(!profId) // if id is null load it from localStorage
+      // eslint-disable-next-line no-param-reassign
       profId = Session.get(Session.keys.AUTH)._id
 
     if(!profId) // if still null exit
@@ -71,6 +65,10 @@ export function updateCurrentProf(profId = null) {
         Session.set(Session.keys.AUTH, prof.toObject())
 
         return prof
+      })
+      .catch(() => { // connot get prof from db
+        // clear session
+        Session.set(Session.keys.AUTH, '')
       })
   }
 }

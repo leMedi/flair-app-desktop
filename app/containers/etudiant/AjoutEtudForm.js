@@ -26,9 +26,10 @@ class AjoutEtudForm extends React.Component {
       if (!validationError)
       newEtudiant({
         ...etudiant,
-        classe_id: classe._id
+        classeId: classe._id,
+        password: 'NO_PASSWORD' // TODO: auto generate
       }) // add new student
-      .then(() => fetchEtudiants({ classe_id: classe._id })) // update students list
+      .then(() => fetchEtudiants({ classeId: classe._id })) // update students list
       .then(()=> this.setState({visible: false})) // hide form
       .catch(err=>console.error(err.message)) 
     });
@@ -56,9 +57,10 @@ class AjoutEtudForm extends React.Component {
 
     const { visible } = this.state;
     
-    const firstNameError = isFieldTouched('firstName') && getFieldError('firstName');
-    const lastNameError = isFieldTouched('lastName') && getFieldError('lastName');
-    const emailError = isFieldTouched('email') && getFieldError('email');
+    const cneError = isFieldTouched('cne') && getFieldError('cne');
+    const nomError = isFieldTouched('nom') && getFieldError('nom');
+    const prenomError = isFieldTouched('prenom') && getFieldError('prenom');
+
     return (
       <div>
         <Button type="primary" onClick={this.showDrawer} style={{marginLeft: '100px'}}>
@@ -81,39 +83,13 @@ class AjoutEtudForm extends React.Component {
             <Row gutter={16}>
               <Col span={12}>
                 <Form.Item 
-                  label="First Name"
-                  validateStatus={firstNameError ? 'error' : ''}
-                  help={firstNameError || ''}
+                  label="cne"
+                  validateStatus={cneError ? 'error' : ''}
+                  help={cneError || ''} 
                 >
-                  {getFieldDecorator('firstName', {
-                    rules: [{ required: true, message: 'please enter first name' }],
-                  })(<Input placeholder="please enter first name" />)}
-                </Form.Item>
-              </Col>
-              <Col span={12}>
-              <Form.Item 
-                label="Last Name"
-                validateStatus={lastNameError ? 'error' : ''}
-                help={lastNameError || ''}
-              >
-                  {getFieldDecorator('lastName', {
-                    rules: [{ required: true, message: 'please enter last name' }],
-                  })(<Input placeholder="please enter last name" />)}
-                </Form.Item>
-              </Col>
-            </Row>
-            <Row gutter={16}>
-                  
-              
-              <Col span={12}>
-                <Form.Item 
-                  label="Email"
-                  validateStatus={emailError ? 'error' : ''}
-                  help={emailError || ''} 
-                >
-                  {getFieldDecorator('email', {
-                    rules: [{ required: true, message: 'please enter your email' }],
-                  })(<Input placeholder="please enter email" />)}
+                  {getFieldDecorator('cne', {
+                    rules: [{ required: true, message: 'please enter your cne' }],
+                  })(<Input placeholder="13111278" />)}
                 </Form.Item>
               </Col>
               <Col span={12}> 
@@ -122,6 +98,31 @@ class AjoutEtudForm extends React.Component {
                 </Form.Item>
               </Col>
             </Row>
+            <Row gutter={16}>
+              <Col span={12}>
+                <Form.Item 
+                  label="Nom"
+                  validateStatus={nomError ? 'error' : ''}
+                  help={nomError || ''}
+                >
+                  {getFieldDecorator('nom', {
+                    rules: [{ required: true, message: 'please enter first name' }],
+                  })(<Input placeholder="please enter first name" />)}
+                </Form.Item>
+              </Col>
+              <Col span={12}>
+              <Form.Item 
+                label="Last Name"
+                validateStatus={prenomError ? 'error' : ''}
+                help={prenomError || ''}
+              >
+                  {getFieldDecorator('prenom', {
+                    rules: [{ required: true, message: 'please enter last name' }],
+                  })(<Input placeholder="please enter last name" />)}
+                </Form.Item>
+              </Col>
+            </Row>
+            
             <div
               style={{
                 position: 'absolute',
