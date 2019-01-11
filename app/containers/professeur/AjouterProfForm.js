@@ -33,7 +33,7 @@ class AjouterProfForm extends React.Component {
     validateFields((validationError, prof) => {
       if (!validationError)
         newProf(prof)
-          .then(AllProfs)
+          .then(() => AllProfs())
           .then(this.onClose)
           .catch(err=>console.error(err))
     });
@@ -137,6 +137,7 @@ class AjouterProfForm extends React.Component {
                   {getFieldDecorator('password', {
                     rules: [
                       { required: true, message: 'Please provide a Password!' },
+                      { min: 4, message: 'Password must be at least 4 chars!' },
                     ],
                   })(
                     <Input type="password" onChange={this.handleChange} />
