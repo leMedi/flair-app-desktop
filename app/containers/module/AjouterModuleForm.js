@@ -139,8 +139,8 @@ class AjouterModuleForm extends React.Component {
                   {getFieldDecorator('hrsCours', {
                     initialValue: 10,
                     rules: [
-                      { type: "number", message: 'Doit etre un nombre' },
-                      { required: true, message: 'Field is required' }
+                      { required: true, message: 'Field is required' },
+                      { pattern: /^[+]?\d+$/, message: 'Doit etre un nombre' },
                     ],
                   })( <Input />)}
                 </Form.Item>
@@ -154,8 +154,8 @@ class AjouterModuleForm extends React.Component {
                   {getFieldDecorator('hrsTD', {
                     initialValue: 10,
                     rules: [
-                      { type: "number", message: 'Doit etre un nombre' },
-                      { required: true, message: 'Field is required' }
+                      { required: true, message: 'Field is required' },
+                      { pattern: /^[+]?\d+$/, message: 'Doit etre un nombre' },
                     ],
                   })(<Input />)}
                 </Form.Item>
@@ -169,8 +169,8 @@ class AjouterModuleForm extends React.Component {
                   {getFieldDecorator('hrsTP', {
                     initialValue: 10,
                     rules: [
-                      { type: "number", message: 'Doit etre un nombre' },
-                      { required: true, message: 'Field is required' }
+                      { required: true, message: 'Field is required' },
+                      { pattern: /^[+]?\d+$/, message: 'Doit etre un nombre' },
                     ],
                   })(<Input />)}
                 </Form.Item>
