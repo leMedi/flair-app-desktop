@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 
 import { Card, Table, Divider, Icon, Popconfirm, message } from 'antd';
 
-import RegisterForm from './AjoutClassForm';
+import AjoutClassForm from './AjoutClassForm';
 
 import { classeFind, classeDelete } from '../../actions/classe';
 
@@ -62,20 +62,22 @@ class ClasseList extends Component {
       
         <Card bordered={false}>
 
-          <RegisterForm />
+          <AjoutClassForm />
           
-          <Table
-            columns={this.columns}
-            dataSource={classes}
-            rowKey="_id"
-            onRow={(classe) => ({
-              onClick: () => ( // click row
-                history.push({
-                  pathname: `/classes/${classe._id}`
-                })
-              ) 
-            })}
-          />
+          <div style={{ overflow: 'hidden', width: '100%' }}>
+            <Table
+              columns={this.columns}
+              dataSource={classes}
+              rowKey="_id"
+              onRow={(classe) => ({
+                onClick: () => ( // click row
+                  history.push({
+                    pathname: `/classes/${classe._id}`
+                  })
+                ) 
+              })}
+            />
+          </div>
           
         </Card>
       

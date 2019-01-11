@@ -150,6 +150,7 @@ class AjoutClassForm extends React.Component {
   }
 
   showDrawer = () => {
+    console.log("show drawer")
     this.setState({
       visible: true,
     });
@@ -180,14 +181,14 @@ class AjoutClassForm extends React.Component {
 
     return (
       <div>
-        <Button type="primary" onClick={this.showDrawer} style={{ float: 'right' }}>
+        <Button type="primary" onClick={this.showDrawer.bind(this)} style={{ float: 'right', marginBottom: '10px' }}>
           Ajouter Classe
         </Button>
         <Drawer
           title="Ajouter Classe"
           width={720}
           placement="right"
-          onClose={this.onClose}
+          onClose={this.onClose.bind(this)}
           maskClosable={false}
           visible={visible}
           style={{
@@ -314,7 +315,7 @@ class AjoutClassForm extends React.Component {
                 style={{
                   marginRight: 8,
                 }}
-                onClick={this.onClose}
+                onClick={this.onClose.bind(this)}
               >
                 Cancel
               </Button>
