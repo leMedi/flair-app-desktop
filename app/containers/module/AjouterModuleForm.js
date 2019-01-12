@@ -6,6 +6,7 @@ import { Drawer, Form, Button, Col, Row, Input, Select, message } from 'antd';
 import { moduleFind, moduleSave } from '../../actions/module';
 import { classeFind } from '../../actions/classe';
 import { profFind } from '../../actions/prof';
+import { updateCurrentProf } from '../../actions/session';
 
 
 const { Option } = Select;
@@ -22,6 +23,8 @@ class AjouterModuleForm extends React.Component {
     this.props.getAllClasses();
     // eslint-disable-next-line react/destructuring-assignment
     this.props.getAllProfs();
+    // eslint-disable-next-line react/destructuring-assignment
+    this.props.form.validateFields();
   }
 
   handleSubmit = (event) => {
@@ -31,6 +34,7 @@ class AjouterModuleForm extends React.Component {
       form: { validateFields },
       getAllModules,
       saveModule,
+      updateSideBarModules,
     } = this.props;
 
     validateFields((validationError, _module) => {
@@ -50,7 +54,7 @@ class AjouterModuleForm extends React.Component {
           .then(() => {
             this.setState({visible: false})
             return getAllModules()
-          })
+          }).then(() => updateSideBarModules())
           .catch(err=>message.error(err.message))
     });
   }
@@ -259,5 +263,6 @@ export default connect(
     saveModule: moduleSave,
     getAllClasses: classeFind,
     getAllProfs: profFind,
+    updateSideBarModules: updateCurrentProf,
   }
 )(RegisterForm);
