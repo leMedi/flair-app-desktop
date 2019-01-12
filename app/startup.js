@@ -3,7 +3,7 @@ import DefaultAdmin from './constants/admin.default.json'
 
 // sync db
 export async function syncDB() {
-
+ // sync logic
 }
 
 // check if db has admin
@@ -24,7 +24,7 @@ export async function createDefaultAdmin() {
 
 
 export default function startup() {
-  createDefaultAdmin()
-    .then(a => console.log('[+] createDefaultAdmin', a))
-    .catch(err => console.error('[!] createDefaultAdmin Error:', err))
+  // createDefaultAdmin()
+  //   .then(a => console.log('[+] createDefaultAdmin', a))
+  //   .catch(err => console.error('[!] createDefaultAdmin Error:', err))
 } 
