@@ -140,8 +140,8 @@ const ModelMaker = (type, _schema) => {
     }
 
     static async bulkSave(_docs = [], options) {
-      const docs = _docs.forEach(doc => Model._validate(doc))
-      return Model._bulk(docs, options)
+      //const docs = _docs.forEach(doc => Model._validate(doc))
+      return Model._bulk(_docs, options)
     }
   }
 }
