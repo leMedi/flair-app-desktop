@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { Button, Card, Table, Divider, Tag } from 'antd';
 
 
-import { getById as getModuleById } from '../../actions/module';
+import { moduleGetById as getModuleById } from '../../actions/module';
 import { find as findAllSeance } from '../../actions/seance';
 import AjoutSeanceForm  from '../seance/AjoutSeanceForm';
 
@@ -79,7 +79,7 @@ class Module extends React.Component {
   render() {
 
     const {
-      module,
+      _module,
       professeur,
       seances,
       history
@@ -87,9 +87,10 @@ class Module extends React.Component {
 
     return (
       <div>
-        { module && 
-          <Card title={module.name}>
-            <h3>Professeur : { professeur ? professeur.firstName : ''} </h3>
+        { _module && 
+          <Card title={_module.nom}>
+            <h4>Charge Horaire : </h4>
+            <h5>Cours: <b>{_module.chargeHoraire.cours}</b> - TD: <b>{_module.chargeHoraire.td}</b> - TP: <b>{_module.chargeHoraire.tp}</b></h5>
           </Card>
         }
 
@@ -129,7 +130,7 @@ class Module extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  module: state.module.currentModule,
+  _module: state.module.current,
   professeur: state.session.currentProf,
   seances: state.seance.list
 });
