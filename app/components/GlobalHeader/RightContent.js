@@ -22,12 +22,7 @@ export class GlobalHeaderRight extends PureComponent {
             Trigger Error
         </Menu.Item>
         <Menu.Divider />
-        <Menu.Item key="logout" onClick={()=>{
-          
-          logout()
-          // .then(() => this.props.history.push('/login'))
-          // .catch(() => null)
-        }}>
+        <Menu.Item key="logout" onClick={()=>logout()}>
           <Icon type="logout" />
             logout
         </Menu.Item>
@@ -41,9 +36,8 @@ export class GlobalHeaderRight extends PureComponent {
               <Avatar
                 size="small"
                 className={styles.avatar}
-                src={currentUser.avatar}
                 alt="avatar"
-              />
+              >{currentUser.nom.charAt(0).toUpperCase()}</Avatar>
               <span className={styles.name}>{currentUser.nom}</span>
             </span>
           </Dropdown>
