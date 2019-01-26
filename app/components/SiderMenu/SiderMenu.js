@@ -45,8 +45,9 @@ class SiderMenu extends PureComponent {
 }
 
 
-function mapStateToProps() {
+function mapStateToProps(state) {
   return {
+    currentUser: state.session.currentProf,
   };
 }
 

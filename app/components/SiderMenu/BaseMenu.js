@@ -27,13 +27,23 @@ export const getMenuMatches = memoizeOne(
 
 export default class BaseMenu extends PureComponent {
 
-  getMenuItems = menuData => (
-    menuData
+  getMenuItems = (menuData) => (
+      menuData
       .filter(item => item.name && !item.hideInMenu)
       .map(item => (
         <Menu.Item key={item.path}>{this.getMenuItem(item)}</Menu.Item>
-      ))
-  );
+        ))
+  )
+
+  getMenuItemsAdmin = (currentUser, menuData) => {
+    if(currentUser && currentUser.role && currentUser.role === 'admin')
+      return menuData
+      .filter(item => item.name && !item.hideInMenu)
+      .map(item => (
+        <Menu.Item key={item.path}>{this.getMenuItem(item)}</Menu.Item>
+        ))
+    return null
+  }
 
   getMenuItem = item => {
     const { name, target } = item;
@@ -77,7 +87,7 @@ export default class BaseMenu extends PureComponent {
     
     // if pathname can't match, use the nearest parent's key
     // let selectedKeys = this.getSelectedMenuKeys(pathname);
-    const { handleOpenChange, style, menuData, menuModulesData } = this.props;
+    const { currentUser, style, menuData, menuModulesData } = this.props;
 
     return (
       <Menu
@@ -91,8 +101,10 @@ export default class BaseMenu extends PureComponent {
         <div className="ant-menu-item-group-title" title="Module">Module</div>
         {this.getMenuItems(menuModulesData)}
 
+        {currentUser && currentUser.role && currentUser.role === 'admin' &&
         <div className="ant-menu-item-group-title" title="Admin">Admin</div>
-        {this.getMenuItems(menuData)}
+        }
+        {this.getMenuItemsAdmin(currentUser, menuData)}
       </Menu>
     );
   }
