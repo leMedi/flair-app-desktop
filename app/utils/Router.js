@@ -2,15 +2,26 @@ import React from 'react';
 import { Switch, Route, Redirect } from 'react-router-dom';
 
 
-const PrivateRoute = ({ component: Component, auth, ...rest }) => (
-  <Route {...rest} render={(props) => (
-    auth.isAuthenticated() === true
-      ? <Component {...props} />
-      : <Redirect to={{
-          pathname: auth.loginPage,
-          state: { from: props.location }
-        }} />
-  )} />
+const PrivateRoute = ({ component: Component, auth, adminOnly, ...rest }) => (
+  <Route {...rest} render={(props) => {
+    if(auth.isAuthenticated()) {
+      if(adminOnly && !auth.isAdmin())
+        return (
+          <Redirect to={{
+            pathname: auth.homePage,
+            state: { from: props.location }
+          }} />
+        )  
+      
+      return <Component {...props} />
+    }
+    return ( 
+      <Redirect to={{
+        pathname: auth.loginPage,
+        state: { from: props.location }
+      }} />
+    )
+  }} />
 )
 
 
@@ -27,6 +38,7 @@ export default function routerMaker(routes) {
                 path={route.path}
                 component={route.component}
                 auth={route.auth}
+                adminOnly={route.adminOnly}
               />
             )
           

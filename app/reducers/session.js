@@ -16,12 +16,13 @@ export default function sessionReducer(state = initState, action) {
         ...state,
         currentProf: action.payload
       }
-    case TYPES.PROF_ERROR:
+    case TYPES.PROF_LOGOUT:
       return {
         ...state,
-        loginError: action.payload
+        currentProf: action.payload
       }
-    
+    case TYPES.PROF_ERROR:
+      return Object.assign({}, initState)
     case TYPES.UPDATE_PROF:
       return {
         ...state,

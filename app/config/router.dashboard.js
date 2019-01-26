@@ -13,9 +13,14 @@ import Seance from '../containers/seance/Seance';
 import HomePage from '../containers/HomePage'
 
 const auth = {
-  isAuthenticated: ()=>((Session.get(Session.keys.AUTH)._id) ? true : false),
-  loginPage: '/user/login'
-} 
+  isAuthenticated: () => Session.get(Session.keys.AUTH)._id,
+  loginPage: '/user/login',
+  isAdmin: () => {
+    console.log("is admin", Session.get(Session.keys.AUTH).type)
+    return Session.get(Session.keys.AUTH).role === 'admin'
+  },
+  homePage:  '/',
+}
 
 // auth = null
 
@@ -33,6 +38,7 @@ const routes = [
     name: "Professeur",
     component: IndexProf,
     auth,
+    adminOnly: true
   },
 
   // Classes router
@@ -47,6 +53,7 @@ const routes = [
     name: "Classes",
     component: ClasseList,
     auth,
+    adminOnly: true
   },
 
   {
@@ -62,6 +69,7 @@ const routes = [
     name: "Modules",
     component: IndexModule,
     auth,
+    adminOnly: true
   },
 
   {
