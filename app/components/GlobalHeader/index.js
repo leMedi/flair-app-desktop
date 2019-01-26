@@ -20,7 +20,6 @@ export default class GlobalHeader extends PureComponent {
 
   toggle = () => {
     const { collapsed, onCollapse } = this.props;
-    console.log("toggle", !collapsed)
     onCollapse(!collapsed);
     this.triggerResizeEvent();
   };
@@ -28,7 +27,7 @@ export default class GlobalHeader extends PureComponent {
   render() {
     const { collapsed, isMobile, logo } = this.props;
     return (
-      <div className={styles.header} onClick={this.toggle}>
+      <div className={styles.header}>
         {isMobile && (
           <Link to="/" className={styles.logo} key="logo">
             <img src={logo} alt="logo" width="32" />

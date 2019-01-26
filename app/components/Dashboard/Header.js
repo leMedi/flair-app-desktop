@@ -5,7 +5,6 @@ import Animate from 'rc-animate';
 import { connect } from 'react-redux';
 import router from 'react-router-dom';
 import GlobalHeader from '../GlobalHeader';
-import TopNavHeader from '../TopNavHeader';
 import styles from './Header.less';
 // import Authorized from '@/utils/Authorized';
 
@@ -115,34 +114,19 @@ class HeaderView extends PureComponent {
   };
 
   render() {
-    const { isMobile, handleMenuCollapse, setting, collapsed } = this.props;
-    const { navTheme, layout, fixedHeader } = setting;
+    const { handleMenuCollapse, setting, collapsed } = this.props;
+    const { fixedHeader } = setting;
     const { visible } = this.state;
-    const isTop = layout === 'topmenu';
     const width = this.getHeadWidth();
     const HeaderDom = visible ? (
       <Header style={{ padding: 0, width }} className={fixedHeader ? styles.fixedHeader : ''}>
-        {isTop && !isMobile ? (
-          <TopNavHeader
-            theme={navTheme}
-            mode="horizontal"
-            // Authorized={Authorized}
-            onCollapse={handleMenuCollapse}
-            onNoticeClear={this.handleNoticeClear}
-            onMenuClick={this.handleMenuClick}
-            onNoticeVisibleChange={this.handleNoticeVisibleChange}
-            // {...this.props}
-          />
-        ) : (
-          <GlobalHeader
-            collapsed={collapsed}
-            onCollapse={handleMenuCollapse}
-            onNoticeClear={this.handleNoticeClear}
-            onMenuClick={this.handleMenuClick}
-            onNoticeVisibleChange={this.handleNoticeVisibleChange}
-            // {...this.props}
-          />
-        )}
+        <GlobalHeader
+          collapsed={collapsed}
+          onCollapse={handleMenuCollapse}
+          onNoticeClear={this.handleNoticeClear}
+          onMenuClick={this.handleMenuClick}
+          onNoticeVisibleChange={this.handleNoticeVisibleChange}
+        />
       </Header>
     ) : null;
     return (
@@ -163,11 +147,3 @@ export default connect(
   mapStateToProps,
   {}
 )(HeaderView);
-
-// export default connect(({ user, global, setting, loading }) => ({
-//   currentUser: user.currentUser,
-//   collapsed: global.collapsed,
-//   fetchingNotices: loading.effects['global/fetchNotices'],
-//   notices: global.notices,
-//   setting,
-// }))(HeaderView);

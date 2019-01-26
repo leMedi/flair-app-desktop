@@ -35,8 +35,11 @@ const session = {
   set(key, obj) {
     if(!key) return null;
     this.setToLocalStorage(key, obj)
-  }
+  },
 
+  deleteKey(key) {
+    localStorage.removeItem(key);
+  }
 
 }
 
