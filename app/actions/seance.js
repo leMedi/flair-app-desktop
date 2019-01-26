@@ -1,75 +1,109 @@
-import Seance, { find as _find, save as _save, getById as _getById} from '../models/Seance'
-
+import Seance from '../models/Seance'
 
 export const TYPES = {
-  SEANCE_FIND: 'SEANCE_FIND',
-  SEANCE_FIND_ERROR: 'SEANCE_FIND_ERROR',
+  SEANCE_FIND: '@SEANCE/FIND',
+  SEANCE_GET: '@SEANCE/GET_BY_ID',
+  SEANCE_SAVE: '@SEANCE/SAVE',
+  
+  MODULE_SEANCES: '@SEANCE/MODULE_SEANCES',
 
-  SEANCE_SAVE: 'SEANCE_SAVE',
-  SEANCE_SAVE_ERROR: 'SEANCE_SAVE_ERROR',
+  SEANCE_FIND_SUCCESS: '@SEANCE/FIND_SUCCESS',
+  SEANCE_GET_SUCCESS: '@SEANCE/GET_BY_ID_SUCCESS',
+  SEANCE_SAVE_SUCCESS: '@SEANCE/SAVE_SUCCESS',
+  
+  MODULE_SEANCES_SUCCESS: '@SEANCE/MODULE_SEANCES_SUCCESS',
 
-  SEANCE_GETBYID: 'SEANCE_GETBYID',
-  SEANCE_GETBYID_ERROR: 'SEANCE_GETBYID_ERROR',
+  SEANCE_ERROR: '@SEANCE/ERROR',
 }
 
-export function find(criteria) {
+export function seanceFind(criteria) {
   return (dispatch) => {
-    _find(criteria)
-    .then(res => (
-      dispatch({
-        type: TYPES.SEANCE_FIND,
-        payload: res.docs
-      })
-    ))
-    .catch(err => {
-      dispatch({
-        type: TYPES.SEANCE_FIND_ERROR
-      })
-    });
-  };
-}
+    dispatch({ type: TYPES.SEANCE_FIND })
 
-
-export function save(seance, cb) {
-  return (dispatch) => {
-    _save(seance)
-    .then(res => {
+    Seance.find(criteria)
+    .then(seances => {
       dispatch({
-        type: TYPES.SEANCE_SAVE,
-        payload: res.docs
+        type: TYPES.SEANCE_FIND_SUCCESS,
+        payload: seances
       })
-      return cb(null, res)
+      return seances
     })
     .catch(err => {
       dispatch({
-        type: TYPES.SEANCE_SAVE_ERROR
+        type: TYPES.SEANCE_ERROR,
+        payload: err.message
       })
-      return cb(err)
-    });
-  };
+      throw err
+    })
+  }
 }
 
-export function getById(id) {
-  return (dispatch) => {
-    //clear var
-    dispatch({
-      type: TYPES.SEANCE_GETBYID,
-      payload: null
-    })
-    return _getById(id)
-    .then(res => {
-      console.log('before dispatch', res)
+export function seanceGetById(id) {
+  return async (dispatch) => {
+    dispatch({ type: TYPES.SEANCE_GET })
+
+    return Seance.getOne(id)
+    .then(seance => {
       dispatch({
-        type: TYPES.SEANCE_GETBYID,
-        payload: res
+        type: TYPES.SEANCE_GET_SUCCESS,
+        payload: seance.toObject()
       })
-      return res
+      return seance.toObject()
     })
     .catch(err => {
-      console.log(err)
       dispatch({
-        type: TYPES.SEANCE_GETBYID_ERROR
+        type: TYPES.SEANCE_ERROR,
+        payload: err.message
       })
-    });
-  };
+      throw err
+    })
+  }
+}
+
+export function seancesFindByModule(moduleId) {
+  return (dispatch) => {
+    dispatch({ type: TYPES.MODULE_SEANCES })
+
+    Seance.findByModule(moduleId)
+    .then(seances => {
+      dispatch({
+        type: TYPES.MODULE_SEANCES_SUCCESS,
+        payload: seances
+      })
+      return seances
+    })
+    .catch(err => {
+      dispatch({
+        type: TYPES.SEANCE_ERROR,
+        payload: err.message
+      })
+      throw err
+    })
+
+  }
+}
+
+
+export function seanceSave(doc) {
+  return async (dispatch) => {
+    dispatch({ type: TYPES.SEANCE_SAVE })
+
+    try {
+      const seance = new Seance(doc)
+      await seance.save()
+
+      dispatch({
+        type: TYPES.SEANCE_SAVE_SUCCESS,
+        payload: seance.toObject()
+      })
+
+      return seance
+    }catch(err){
+      dispatch({
+        type: TYPES.SEANCE_ERROR,
+        payload: err.message
+      })
+      throw err
+    }
+  }
 }

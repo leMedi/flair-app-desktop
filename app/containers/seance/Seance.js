@@ -1,108 +1,237 @@
 import React from 'react';
-import { Card, Row, Col, Button, Icon, Divider, Tag } from "antd";
+import { Card, Row, Col, Table, Button, Progress, Switch, Divider, Tag } from "antd";
 import { connect } from "react-redux";
-import styles from './Seance.less'
+// import styles from './Seance.less'
 
 import SeanceServer from '../../socketServer'
 
-import { getById as getSeanceById } from '../../actions/seance';
-import { find as findEtudiants } from '../../actions/etudiant';
-
+import { seanceGetById } from '../../actions/seance';
+import { etudiantFind } from '../../actions/etudiant';
 
 class Seance extends React.Component {
 
-  state = {
-    isSeanceStarted: false,
-    accepetingNewStuddents: false,
-    tasksDone: [],
-    connectedStudents: [],
+
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      isLive: false,
+      isAcceptingNewConnections: false,
+  
+      tasks: [],
+      students: []
+    }
   }
+  
 
   
   componentDidMount() {
-    const seanceId = this.props.match.params.id;
+    const {
+      match : { params: { id: seanceId } },
+      history,
+      getSeanceById,
+      findEtudiants,
+      _module
+    } = this.props;
+
     
-    if(!this.props._module)
-      this.props.history.push('/')
+    if(!_module)
+      history.push('/')
     else {
-      this.props.findEtudiants({ classe: this.props._module.classe })    
-      this.props.getSeanceById(seanceId)
+      getSeanceById(seanceId)
+        .then((seance) => {
+          this.setState({
+            tasks: seance.tasks.map((t,i) => ({ index: i, nom: t, isDone: false })),
+          })
+          return seance
+        })
+        .then(seance =>
+          findEtudiants({ classeId: _module.classeId }).then((etudiants) => {
+            this.setState({
+              students: etudiants.map(e => Object.assign(
+                  e,
+                  {
+                    assignments: seance.assignments.map((t,i) => ({ index: i, nom: t, isDone: false })),
+                    isConnected: false,
+                  }
+                )
+              )
+            })
+            return seance
+          })
+        )
+        .catch(() => null) // navigate to other page
     }
   }
+
+  tachesColumns = [
+    {
+      width: 150,
+      title: 'Order',
+      dataIndex: 'index',
+    },
+    {
+      title: 'Tache',
+      dataIndex: 'nom',
+    },
+    {
+      title: 'Est-Fait ?',
+      key: 'action',
+      render: (list, record, index) => (
+        <Switch
+          checked={record.isDone}
+          onChange={() => { this.toggleTask(index) }}
+        />
+      ),
+    }
+  ];
+
+  etudiantsColumns = [
+    {
+      title: 'CNE',
+      dataIndex: 'cne',
+    },
+    {
+      title: 'Nom & Prenom',
+      dataIndex: 'nom',
+      render: (list, record) => `${record.nom} ${record.prenom}`,
+    },
+    {
+      title: 'Progresse',
+      key: 'progresse',
+      render: (list, record) => {
+        let percent = 0;
+        
+        record.assignments.forEach(a => {
+          if(a.isDone) percent += 1
+        });
+        percent /= record.assignments.length
+        return <Progress percent={percent*100} size="small" />
+      },
+    },
+    {
+      title: 'Est-Present(e) ?',
+      key: 'action',
+      render: (list, record) => (
+        <Tag color={record.isConnected ? '#87d068' : 'red' }>{record.isConnected ? 'Oui' : 'Non' }</Tag>
+      ),
+    }
+  ];
+  
   
   seanceServer = null
 
-  startSeance() {
+
+  // eslint-disable-next-line class-methods-use-this
+  goLive(cb) {
     const {
       seance,
       _module,
-      etudiants,
     } = this.props;
 
-    const {
-      connectedStudents
-    } = this.state;
+    const { students, tasks } = this.state
 
-    this.seanceServer = new SeanceServer(seance, _module, etudiants)
-    
-    this.seanceServer.onStudent((cne) => {
-      this.setState({ connectedStudents: connectedStudents.concat(cne) })
+    this.seanceServer = new SeanceServer({ 
+      seance, _module,
+      tasks,
+      students,
     })
-    this.seanceServer.onStudentDisconnect((cne) => {
-      const index = connectedStudents.indexOf(cne)
-      this.setState({ connectedStudents: connectedStudents.splice(index, 1) })
+
+    this.seanceServer.onStudent(index => {
+      // look for student and update it's 'isConnected' property
+      students[index].isConnected = true
+      this.setState({ students })
+    })
+
+    this.seanceServer.onStudents(_students => {
+      this.setState({ students: _students })
+    })
+
+    this.seanceServer.onStudentDisconnect(index => {
+      // look for student and update it's 'isConnected' property
+      students[index].isConnected = false
+      this.setState({ students })
     })
     
-    this.seanceServer.start(() => {
-      this.setState({ isSeanceStarted: true, accepetingNewStuddents: true })
-
-    })
+    return this.seanceServer.start(cb)
   }
 
-  stopAccepetingNewStuddents() {
-    // this.seanceSever = new SeanceServer()
-    this.setState({ accepetingNewStuddents: false })
-    this.seanceServer.stop(()=>{console.log('server stopped')})
+  // eslint-disable-next-line class-methods-use-this
+  endLive(cb) {
+    console.log('stoping server')
+    this.seanceServer.stop(cb)
+    // save result
   }
 
-  startAccepetingNewStuddents() {
-    // this.seanceSever = new SeanceServer()
-    this.setState({ accepetingNewStuddents: true })
+  toggleLive() {
+    const { isLive } = this.state
+    if(isLive) { // end live
+      // eslint-disable-next-line promise/catch-or-return
+      this.endLive(() => {
+        console.log('server stopped ')
+        this.setState({
+          isLive: false,
+          isAcceptingNewConnections: false
+        })
+      })
+      
+    } else {
+      // eslint-disable-next-line promise/catch-or-return
+      this.goLive(() =>
+        this.setState({
+          isLive: true,
+          isAcceptingNewConnections: true
+        })
+      )
+    }      
   }
 
-  renderSeanceButton() {
-    if(!this.state.isSeanceStarted)
-      return (<Button type="primary" onClick={this.startSeance.bind(this)}>Demarer la Seance</Button>)
+  // eslint-disable-next-line class-methods-use-this
+  toggleNewConnections() {
+    const { isAcceptingNewConnections } = this.state
+    if(isAcceptingNewConnections) { // end live
+      this.setState({
+        isAcceptingNewConnections: false
+      })
+    } else {
+      this.setState({
+        isAcceptingNewConnections: true
+      })
+    }    
+  }
+
+  toggleTask(index) {
+    const { isLive, tasks } = this.state;
+
+    if(!isLive) return false
     
-    if(!this.state.accepetingNewStuddents)
-      return (<Button type="ghost" onClick={this.startAccepetingNewStuddents.bind(this)}>Accepter les connexions</Button>)
-  
-    return (<Button type="danger" onClick={this.stopAccepetingNewStuddents.bind(this)}>Arreter</Button>)
+    console.log('toggleTask', index)
+    
+    
+    tasks[index].isDone = !tasks[index].isDone
+    
+    this.setState({ tasks })
+    
+    this.seanceServer.setTasks(tasks)
   }
 
-  taskToggel(index) {
-    const { tasksDone } = this.state;
-    const i = tasksDone.indexOf(index);
-    if(i > -1) {
-      tasksDone.splice(i, 1)
-      this.seanceServer.toggleTask(index, false)
-    }else{
-      this.seanceServer.toggleTask(index, true)
-      tasksDone.push(index)
-    }
-
-    this.setState({ tasksDone })
-  }
-
-  studentState(student) {
-    if(this.state.connectedStudents.includes(student.cne+'')){
-      return styles.connected
-    }
-    
-    if(this.state.accepetingNewStuddents)
-      return styles.not_connected
-    
-    return styles.disabled
+  renderHeaderActions() {
+    const { isLive, isAcceptingNewConnections } = this.state
+    return (
+      <React.Fragment>
+        <Button
+          onClick={this.toggleLive.bind(this)}
+          type={isLive ? 'danger' : 'primary'}
+        >{isLive ? 'Arreter' : 'Demarer'} la Seance</Button>
+        &nbsp;
+        <Button
+          onClick={this.toggleNewConnections.bind(this)}
+          ghost
+          disabled={!isLive}
+          type={ isAcceptingNewConnections ? 'danger' : 'primary' }
+        >{isAcceptingNewConnections ? 'Ne pas accepter' : 'Accepter'} de nouvelles connexions</Button>
+      </React.Fragment>
+    )
   }
 
   render() {
@@ -110,100 +239,42 @@ class Seance extends React.Component {
     const {
       seance,
       _module,
-      etudiants,
     } = this.props;
 
-    const { tasksDone } = this.state;
+    const { tasks, students } = this.state;
 
-    if(seance)
-      console.log('seance', seance)
     return (
       <div>
-         { seance &&
-          <Card title={`Seance: ${seance.name}`}>
-            {this.renderSeanceButton()}
-            
-
+         { seance && tasks && students &&
+          <Card
+            title={`Module: ${_module.nom} - Seance: ${seance.name}`}
+            extra={this.renderHeaderActions()}
+          >
             <Row>
               <Col>
-                <h3 style={{ textAlign: 'center' }}>Taches</h3>
-                <ul
-                  style={{ listStyle: 'none', padding: 0, margin: '0 auto', width: 500, }}
-                >
-                  {
-                    seance.tasks.map((tasks, index)=>(
-                      <li
-                        key={index}
-                      >
-                        <div
-                          style={{
-                            display: 'table',
-                            margin: '4px auto',
-                            border: '1px solid rgba(127, 143, 166,1.0)',
-                            padding: '5px 10px',
-                            textAlign: 'center',
-                            fontSize: '18px'
-                          }}
-
-                          onClick={(e)=>{
-                            e.preventDefault()
-                            this.taskToggel(index)
-                          }}
-                        >
-                          {
-                            tasksDone.includes(index) ?  
-                              (<Icon
-                                type="check-circle"
-                                theme="twoTone"
-                                twoToneColor="#52c41a"
-                                style={{
-                                  paddingRight: '10px '
-                                }}
-                              />)
-                              :
-                              (<Icon
-                                type="clock-circle"
-                                theme="twoTone"
-                                twoToneColor="#eb2f96"
-                                style={{
-                                  paddingRight: '10px '
-                                }}
-                              />)
-                          }
-                          {tasks}
-                        </div>
-                        
-                      </li>
-                    ))
-                  }
-                </ul>
+                <Table 
+                  columns={this.tachesColumns}
+                  dataSource={tasks}
+                  rowKey="index"
+                  bordered
+                  pagination={false}
+                />
               </Col>
               <Col>
                   <Divider>Etudiants</Divider>
-                  { etudiants &&
-                  <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-                    {
-                       etudiants.map((etudiant, i) =>(
-                        <li
-                          key={i}
-                          className={`${styles.student_card} ${this.studentState(etudiant)}`}
-                        >
-                          <p style={{marginBottom: 2}}>Nom: <b>{etudiant.firstName} {etudiant.lastName}</b></p>
-                          <p style={{marginBottom: 2}}>CNE: <b>{etudiant.cne}</b></p>
-                          <Divider />
-                          <p>
-                            Devoir: &nbsp;&nbsp;
-                            {
-                              seance.assignments.map((assignment, j)=>(
-                                <Tag key={j} color="red">{assignment}</Tag> 
-                              ))
-                            }  
-                          </p>
-                        </li>
-                       ))  
+                  <Table 
+                    columns={this.etudiantsColumns}
+                    dataSource={students}
+                    expandedRowRender={record =>
+                      <p style={{ margin: 0 }}>{
+                        record.assignments.map(a => 
+                          <Tag color={a.isDone ? '#87d068' : 'red' }>{a.nom}</Tag>  
+                        )
+                      }</p>
                     }
-                  </ul>
-                  }
+                    rowKey="_id"
+                    pagination={false}
+                  />
               </Col>
             </Row>
             
@@ -215,12 +286,15 @@ class Seance extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  seance: state.seance.currentSeance,
-  _module: state.module.currentModule,
+  seance: state.seance.current,
+  _module: state.module.current,
   etudiants: state.etudiant.list,
 });
 
 export default connect(
   mapStateToProps,
-  { getSeanceById, findEtudiants }
+  { 
+    getSeanceById: seanceGetById,
+    findEtudiants: etudiantFind,
+  }
 )(Seance);

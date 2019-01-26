@@ -5,6 +5,7 @@ import Session from '../utils/Session'
 export const TYPES = {
 
   PROF: '@LOGIN/PROF_LOGIN',
+  PROF_LOGOUT: '@LOGIN/PROF_LOGOUT',
   PROF_ERROR: '@LOGIN/PROF_ERROR',
 
   UPDATE_PROF: '@SESSION/PROF',
@@ -40,6 +41,20 @@ export function profLogin(email, password) {
         })
       });
   };
+}
+
+export function profLogout() {
+  return (dispatch) => {
+    
+    Session.deleteKey(Session.keys.AUTH)
+
+    dispatch({
+      type: TYPES.PROF_LOGOUT,
+      payload: null
+    })
+
+    return "done"
+  }
 }
 
 export function updateCurrentProf(profId = null) {

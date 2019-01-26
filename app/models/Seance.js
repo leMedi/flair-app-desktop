@@ -12,24 +12,25 @@ const Seance = Model("seance", Joi.object().keys({
   assignments: Joi.array().items(Joi.string()),
 }));
 
+Seance.findByModule = async moduleId => Seance.find({ moduleId })
 
 export default Seance;
 
-export const save = (doc) => (
-  store({
-    ...doc,
-    type: 'seance'
-  })
-)
+// export const save = (doc) => (
+//   store({
+//     ...doc,
+//     type: 'seance'
+//   })
+// )
 
-export const getById = id => _getById(id)
+// export const getById = id => _getById(id)
 
 
-export const find = (criteria = {}) => (
-  _find({
-    selector: {
-      ...criteria,
-      type: 'seance'
-    },
-  })
-)
+// export const find = (criteria = {}) => (
+//   _find({
+//     selector: {
+//       ...criteria,
+//       type: 'seance'
+//     },
+//   })
+// )

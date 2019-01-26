@@ -14,7 +14,7 @@ export function etudiantFind(criteria) {
   return (dispatch) => {
     dispatch({ type: TYPES.ETUDIANT_FIND })
 
-    Etudiant.find(criteria)
+    return Etudiant.find(criteria)
     .then(etudiants => {
       dispatch({
         type: TYPES.ETUDIANT_FIND_SUCCESS,
