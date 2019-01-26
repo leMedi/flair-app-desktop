@@ -15,10 +15,9 @@ import {
 import DynamicFieldSet from '../../components/DynamicFieldSet';
 // import TaskList from '../../components/TaskList';
 
-import { find, save } from '../../actions/seance';
+import { seancesFindByModule, seanceSave } from '../../actions/seance';
 import Seance from '../../models/Seance'
 
-const { RangePicker } = DatePicker;
 const { TextArea } = Input;
 
 
@@ -31,21 +30,20 @@ class AjoutSeanceForm extends Component {
     event.preventDefault();
 
     const {
-      module: { _id: module_id },
-      find,
+      module: { _id: moduleId },
+      findByModule,
       form: { validateFields }
     } = this.props;
 
-    validateFields((err, {name, description, semaine, taches, devoirs}) => {
+    validateFields((err, {name, description, date, taches, devoirs}) => {
       if (!err) {
         const seance = new Seance({
-          module_id,
+          moduleId,
           
           name,
           description,
           
-          dateDebut: semaine[0].format('YYYY-MM-DD'),
-          dateFin: semaine[1].format('YYYY-MM-DD'),
+          date: date.format('YYYY-MM-DD'),
 
           tasks: taches,
           assignments: devoirs,
@@ -55,7 +53,7 @@ class AjoutSeanceForm extends Component {
           .then(() => {
             console.log('seance save', seance.toObject())
             this.setState({visible: false})
-            return find({ module_id }) // update Module Seances list
+            return findByModule(moduleId) // update Module Seances list
           })
           .catch(saveError => console.error('Seance Save Error', saveError))
 
@@ -79,12 +77,19 @@ class AjoutSeanceForm extends Component {
   };
 
   render() {
-    const { getFieldDecorator, getFieldsError, getFieldError, isFieldTouched } = this.props.form;
+    const {
+      form, 
+      form : { getFieldDecorator, getFieldError, isFieldTouched },
+    } = this.props;
+
+    const {
+      visible,
+    } = this.state;
     
     const nameError = isFieldTouched('name') && getFieldError('name');
     // const leçonError = isFieldTouched('leçon') && getFieldError('leçon');
-    const devoirError = isFieldTouched('devoir') && getFieldError('devoir');
-    const semaineError = isFieldTouched('semaine') && getFieldError('semaine');
+    // const devoirError = isFieldTouched('devoir') && getFieldError('devoir');
+    const dateError = isFieldTouched('date') && getFieldError('date');
     const descriptionError = isFieldTouched('description') && getFieldError('description');
     
     
@@ -99,14 +104,14 @@ class AjoutSeanceForm extends Component {
           placement="right"
           onClose={this.onClose}
           maskClosable={false}
-          visible={this.state.visible}
+          visible={visible}
           style={{
             height: 'calc(100% - 55px)',
             overflow: 'auto',
             paddingBottom: 53,
           }}
         >
-          <Form layout="vertical" hideRequiredMark  onSubmit={this.handleSubmit}>
+          <Form layout="vertical" hideRequiredMark onSubmit={this.handleSubmit}>
               
               <Row gutter={16}>
                 <Col span={12}>
@@ -122,13 +127,13 @@ class AjoutSeanceForm extends Component {
                 </Col>
                 <Col span={12}>
                   <Form.Item 
-                      label="Semaine"
-                      validateStatus={semaineError ? 'error' : ''}
-                      help={semaineError || ''}
+                      label="Date"
+                      validateStatus={dateError ? 'error' : ''}
+                      help={dateError || ''}
                     >
-                      {getFieldDecorator('semaine', {
-                        rules: [{ required: true, message: 'please select Week' }],
-                      })(<RangePicker />)}
+                      {getFieldDecorator('date', {
+                        rules: [{ required: true, message: 'please select Date' }],
+                      })(<DatePicker />)}
                   </Form.Item>
                 </Col>
               </Row>
@@ -147,8 +152,8 @@ class AjoutSeanceForm extends Component {
                 </Col>
               </Row>
 
-              <DynamicFieldSet listName='taches' form={this.props.form}/>
-              <DynamicFieldSet listName='devoirs' form={this.props.form}/>
+              <DynamicFieldSet listName='taches' form={form}/>
+              <DynamicFieldSet listName='devoirs' form={form}/>
                 
 
               <div
@@ -191,10 +196,13 @@ class AjoutSeanceForm extends Component {
 const RegisterForm = Form.create()(AjoutSeanceForm);
 
 const mapStateToProps = state => ({
-  module: state.module.currentModule,
+  module: state.module.current,
 });
 
 export default connect(
   mapStateToProps,
-  { find, save }
+  {
+    findByModule: seancesFindByModule,
+    save: seanceSave
+  }
 )(RegisterForm);

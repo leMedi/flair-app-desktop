@@ -3,8 +3,8 @@ import { connect } from "react-redux";
 import { Button, Card, Table, Divider, Tag } from 'antd';
 
 
-import { moduleGetById as getModuleById } from '../../actions/module';
-import { find as findAllSeance } from '../../actions/seance';
+import { moduleGetById } from '../../actions/module';
+import { seancesFindByModule } from '../../actions/seance';
 import AjoutSeanceForm  from '../seance/AjoutSeanceForm';
 
 import Seance from '../../models/Seance'
@@ -17,12 +17,10 @@ const columns = [
     key: 'name',
   },
   {
-    title: 'Semaine',
-    key: 'semaine',
+    title: 'Date',
+    key: 'date',
     render: (text, record) => (
-      <React.Fragment>
-        <Tag color="blue">{record.dateDebut}</Tag> - <Tag color="purple">{record.dateFin}</Tag>
-      </React.Fragment>
+      <Tag color="blue">{record.date}</Tag>
     )
   },
   {
@@ -44,11 +42,11 @@ const columns = [
   {
     title: 'Action',
     key: 'action',
-    render: (text, record) => (
+    render: () => (
       <span>
-        <a href="javascript:;">Edit </a>
+        <a href="#">Edit </a>
         <Divider type="vertical" />
-        <a href="javascript:;">Delete</a>
+        <a href="#">Delete</a>
       </span>
     ),
   }
@@ -57,23 +55,21 @@ const columns = [
 
 class Module extends React.Component {
 
-  
-
   componentDidMount() {
-    // 
-    // console.log("componentDidMount", moduleId)
-    // this.props.getModuleById(moduleId);
-    // this.props.findAllSeance();
+    this.loadData(this.props.match.params.id)
   }
 
   componentDidUpdate(prevProps) {
     const moduleId = this.props.match.params.id;
     if (moduleId !== prevProps.match.params.id) {
-      this.props.getModuleById(moduleId);
-      this.props.findAllSeance({
-        moduleId: moduleId
-      });
+      this.loadData(moduleId)
     }
+  }
+
+  loadData(moduleId) {
+    const {getModuleById, findAllSeance} = this.props
+    getModuleById(moduleId);
+    findAllSeance(moduleId);
   }
 
   render() {
@@ -132,10 +128,13 @@ class Module extends React.Component {
 const mapStateToProps = state => ({
   _module: state.module.current,
   professeur: state.session.currentProf,
-  seances: state.seance.list
+  seances: state.seance.moduleSeances
 });
 
 export default connect(
   mapStateToProps,
-  {getModuleById, findAllSeance}
+  {
+    getModuleById: moduleGetById,
+    findAllSeance: seancesFindByModule,
+  }
 )(Module);
