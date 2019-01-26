@@ -19,7 +19,7 @@ const ProfProfile = ({prof, modules}) => (
           <p><strong>Somme:  </strong>{prof.somme}</p>
           <div><strong>Module:  </strong>
             {
-              modules.map(_module => (<Tag key={_module._id} color="blue">{_module.name}</Tag> ))
+              modules.map(_module => (<Tag key={_module._id} color="blue">{_module.nom}</Tag> ))
             }
           </div>
         </Col>

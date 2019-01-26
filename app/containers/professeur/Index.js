@@ -23,7 +23,7 @@ function filterContacts(contacts, search) {
 
 function filterModule(modules, profId) {
   return profId
-    ? modules.filter(module => module.professeur == profId)
+    ? modules.filter(_module => _module.profId === profId)
     : [];
 }
 
