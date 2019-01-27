@@ -1,14 +1,14 @@
 import React from 'react';
 import { connect } from "react-redux";
 
-import { Layout, Card, Row, Col } from 'antd';
+import { Layout, Card, Row, Popconfirm, Button } from 'antd';
 
 import { List, Profile } from '../../components/Etudiant';
 import ContactSearch from '../../components/contact/ContactSearch';
 import RegisterForm from '../etudiant/AjoutEtudForm';
 
 // redux
-import { etudiantFind } from '../../actions/etudiant';
+import { etudiantFind, etudiantDelete } from '../../actions/etudiant';
 import { classeGetById } from '../../actions/classe';
 
 const {  Content, Sider } = Layout;
@@ -28,7 +28,7 @@ class Classe extends React.Component {
 
   constructor(props) {
       super(props);
-  
+
       this.state = {
         selectedId: -1,
         search: '',
@@ -43,13 +43,22 @@ class Classe extends React.Component {
       findEtudiants,
       getClass
     } = this.props
-    
+  
+    this.id = id
     getClass(id);
     findEtudiants({ classeId: id })
   }
 
   onSearchInputChange (event)  {
     this.setState({ search: event.target.value });
+  }
+
+  deleteEtudiant(etudiant) {
+    const { deleteEtudiant, findEtudiants } = this.props;
+    
+    deleteEtudiant(etudiant)
+      .then(() => findEtudiants({ classeId: this.id }))
+      .catch(err => console.log('delete student error', err))
   }
 
   render() {
@@ -81,11 +90,22 @@ class Classe extends React.Component {
                   handelSelect={ etudiant => {
                       this.setState({selectedId: etudiant._id});
                   }}
-                  selectedId = {selectedId}
+                  selectedId={selectedId}
                 />
               </Sider>
               <Content style={{ padding: '20px 80px', minHeight: 280, borderLeft:'1px solid rgba(128, 128, 128, 0.28)' }}>
                 <Profile etudiant={selectedEtudiant}/>
+
+                { (typeof selectedEtudiant === 'object') &&
+                  <Popconfirm
+                    title="Are you sure delete this task?"
+                    okText="Oui"
+                    cancelText="Non"
+                    onConfirm={() => this.deleteEtudiant(selectedEtudiant) }
+                  >
+                    <Button type="danger" style={{marginTop: 30}}>Supprimer</Button>
+                  </Popconfirm>
+                }
               </Content>
             </Layout>
           </Content>
@@ -106,6 +126,7 @@ export default connect(
   mapStateToProps,
   {
     findEtudiants: etudiantFind,
+    deleteEtudiant: etudiantDelete,
     getClass: classeGetById
   }
 )(Classe);
