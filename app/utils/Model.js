@@ -10,6 +10,7 @@ const ModelMaker = (type, _schema) => {
       type: _Joi.string().required(),
       _id: Joi.string(),
       _rev: Joi.string(),
+      _deleted: Joi.boolean(),
     })
 
   return class Model {
