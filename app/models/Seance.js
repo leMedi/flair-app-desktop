@@ -1,4 +1,3 @@
-import {store, find as _find, getById as _getById} from '../database'
 import Model, { Joi } from '../utils/Model'
 
 const Seance = Model("seance", Joi.object().keys({
@@ -15,22 +14,3 @@ const Seance = Model("seance", Joi.object().keys({
 Seance.findByModule = async moduleId => Seance.find({ moduleId })
 
 export default Seance;
-
-// export const save = (doc) => (
-//   store({
-//     ...doc,
-//     type: 'seance'
-//   })
-// )
-
-// export const getById = id => _getById(id)
-
-
-// export const find = (criteria = {}) => (
-//   _find({
-//     selector: {
-//       ...criteria,
-//       type: 'seance'
-//     },
-//   })
-// )
